@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.ActiveMap" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryVariant">@color/primary_dark</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/secondary</item>
+        <item name="colorSecondaryVariant">@color/secondary_dark</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <item name="android:statusBarColor">@color/primary_dark</item>
+    </style>
+    
+    <color name="primary">#1976d2</color>
+    <color name="primary_dark">#1565c0</color>
+    <color name="secondary">#4caf50</color>
+    <color name="secondary_dark">#388e3c</color>
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
+</resources>
