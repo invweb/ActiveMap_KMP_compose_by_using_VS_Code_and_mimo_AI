@@ -1,20 +1,20 @@
 # Active Map
 
-Kotlin Multiplatform + Compose Multiplatform приложение для отслеживания и каталогизации локаций. Поддерживает Android, Desktop (JVM) и Web (Kotlin/JS).
+Kotlin Multiplatform + Compose Multiplatform is an application for tracking and cataloging locations. Supports Android, Desktop (JVM) and Web (Kotlin/JS).
 
-## Стек
+## Stack
 
-- **Kotlin 2.1.10** + **Compose Multiplatform 1.7.3**
-- **Android**: OsmDroid (карты), Room (хранение), Compose Material 3
-- **Desktop**: Compose Desktop, Canvas (рендеринг карт)
-- **Web**: Kotlin/JS, HTML/CSS ( Leaflet.js для карт)
-- **Общий модуль**: kotlinx.coroutines, kotlinx.serialization, kotlinx.datetime
+- **Kotlin 2.1.10** + ** Compose Multiplatform 1.7.3**
+- ** Android**: OsmDroid (Maps), Room (Storage), Compose Material 3
+- **Desktop**: Compose Desktop, Canvas (map rendering)
+- **Web**: Kotlin/JS, HTML/CSS ( Leaflet.js for maps)
+- **Common module**: kotlinx.coroutines, kotlinx.serialization, kotlinx.datetime
 
-## Структура
+## Structure
 
 ```
 ActiveMap/
-├── shared/             # Общий модуль: модели, ViewModel, репозиторий
+├── shared/             # Common module: models, ViewModel, Repository
 ├── androidApp/         # Android UI
 ├── desktopApp/         # Desktop UI (JVM)
 ├── webApp/             # Web UI (Kotlin/JS)
@@ -23,62 +23,62 @@ ActiveMap/
 └── gradle.properties
 ```
 
-## Запуск
+## Launch
 
 ```bash
-# Требуется JDK 17+ (brew install openjdk@17)
+# Requires JDK 17+ (brew install openjdk@17)
 
-# Android (эмулятор или устройство)
+# Android (emulator or device)
 ./gradlew :androidApp:installDebug
 
 # Desktop
 ./gradlew :desktopApp:run
 
-# Web (dev-сервер)
+# Web (dev server)
 ./gradlew :webApp:jsBrowserDevelopmentRun
 
-# Тесты
+# Tests
 ./gradlew :shared:allTests
 ```
 
-## Функциональность
+## Functionality
 
-- **Карта** с маркерами локаций (цвета по типу активности), long press для выбора точки
-- **Список локаций** с фильтрацией по типу/статусу и поиском по названию
-- **Добавление локации** с полной формой и валидацией (название и координаты обязательны)
-- **Детальная карточка** с просмотром и редактированием
-- **Сохранение данных** между перезапусками (Room на Android, JSON на других платформах)
+- **Map** with location markers (colors according to activity type), long press to select a point
+- **List of locations** with filtering by type/status and search by name
+- **Adding a location** with full form and validation (name and coordinates are required)
+- **Detailed card** with viewing and editing
+- **Saving data** between restarts (Room on Android, JSON on other platforms)
 
-## Модель данных
+## Data model
 
-| Поле | Типы |
+| Field | Types |
 |------|------|
-| Название | строка (обязательно) |
-| Тип активности | СПОРТ, РАБОТА, ОТДЫХ, ОБРАЗОВАНИЕ, РАЗВЛЕЧЕНИЯ |
-| Координаты | широта, долгота (обязательно) |
-| Покрытие | НЕТ, ЧАСТИЧНОЕ, СРЕДНЕЕ, ПОЛНОЕ |
-| Освещение | НЕТ, СЛАБОЕ, СРЕДНЕЕ, ЯРКОЕ |
-| Чистота | ГРЯЗНО, ПЛОХО, СРЕДНЕЕ, ЧИСТО, ИДЕАЛЬНО |
-| Шум | ТИХО, НЕМНОГО ШУМА, СРЕДНИЙ ШУМ, ШУМНО, ОЧЕНЬ ШУМНО |
-| Инвентарь | строка |
-| Рейтинг | 1-5 |
-| Статус | БЫЛ, ХОЧУ СХОДИТЬ, НЕ ПОДХОДИТ |
-| Заметки | строка |
-| Фото | список ссылок |
+| Name | line (required) |
+| Type of activity | SPORTS, WORK, LEISURE, EDUCATION, ENTERTAINMENT |
+| Coordinates | latitude, longitude (required) |
+| Coverage | NONE, PARTIAL, MEDIUM, FULL |
+| Lighting | NO, LOW, MEDIUM, BRIGHT |
+| Cleanliness | DIRTY, BAD, AVERAGE, CLEAN, PERFECT |
+| Noise | QUIET, LITTLE NOISE, MEDIUM NOISE, NOISY, VERY NOISY |
+| Inventory | row |
+| Rating | 1-5 |
+| Status | I WAS, I WANT TO GO, NOT SUITABLE |
+| Notes | line |
+| Photo | list of links |
 
-## Архитектура
+## Architecture
 
-- **shared** — `commonMain`: модели (`@Serializable`), `LocationViewModel`, `LocationRepository`. Платформенные реализации в `androidMain`, `desktopMain`, `jsMain`
-- **androidApp** — навигация через состояние (`when`), OsmDroid, Room
-- **desktopApp** — Canvas-based карта, in-memory репозиторий
-- **webApp** — HTML/CSS интерфейс, Leaflet.js для карт
+- **shared** — `commonMain': models (`@Serializable`), `LocationViewModel', `LocationRepository'. Platform implementations in `androidMain', `Desktops', `jsMain`
+- **AndroidApp** — navigation through state (`when`), OsmDroid, Room
+- **Desktops** — Canvas-based map, in-memory repository
+- **webApp** — HTML/CSS interface, Leaflet.js for maps
 
-## Требования
+## Requirements
 
 - JDK 17+
 - Android SDK (API 34+)
-- Gradle 9.6.1 (wrapper в проекте)
+- Gradle 9.6.1 (wrapper in the project)
 
-## Лицензия
+## License
 
 MIT
