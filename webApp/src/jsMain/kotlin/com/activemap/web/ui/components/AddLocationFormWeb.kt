@@ -4,6 +4,7 @@ import androidx.compose.runtime.*
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import com.activemap.shared.model.*
+import com.activemap.shared.resources.Strings
 
 @Composable
 fun AddLocationFormWeb(
@@ -58,7 +59,7 @@ fun AddLocationFormWeb(
                     }
                 }
             ) {
-                Text("Добавить локацию")
+                Text(Strings.addLocation())
             }
             
             Button(
@@ -74,7 +75,7 @@ fun AddLocationFormWeb(
                     }
                 }
             ) {
-                Text("Закрыть")
+                Text(Strings.close())
             }
         }
         
@@ -89,7 +90,7 @@ fun AddLocationFormWeb(
             }
         ) {
             // Name (required)
-            FormField("Название *", showError && name.isBlank()) {
+            FormField(Strings.nameRequired(), showError && name.isBlank()) {
                 Input(
                     attrs = {
                         value(name)
@@ -112,13 +113,13 @@ fun AddLocationFormWeb(
                             }
                         }
                     ) {
-                        Text("Название обязательно")
+                        Text(Strings.nameIsRequired())
                     }
                 }
             }
             
             // Activity type
-            FormField("Тип активности") {
+            FormField(Strings.activityType()) {
                 Div(
                     attrs = {
                         style {
@@ -137,7 +138,7 @@ fun AddLocationFormWeb(
             }
             
             // Coordinates (required)
-            FormField("Координаты *", showError && (latitude.isBlank() || longitude.isBlank())) {
+            FormField(Strings.coordinatesRequired(), showError && (latitude.isBlank() || longitude.isBlank())) {
                 Div(
                     attrs = {
                         style {
@@ -157,7 +158,7 @@ fun AddLocationFormWeb(
                             attrs = {
                                 value(latitude)
                                 onInput { event -> latitude = event.value }
-                                placeholder("Широта")
+                                placeholder(Strings.latitude())
                                 style {
                                     width(100.percent)
                                     padding(12.px)
@@ -179,7 +180,7 @@ fun AddLocationFormWeb(
                             attrs = {
                                 value(longitude)
                                 onInput { event -> longitude = event.value }
-                                placeholder("Долгота")
+                                placeholder(Strings.longitude())
                                 style {
                                     width(100.percent)
                                     padding(12.px)
@@ -194,7 +195,7 @@ fun AddLocationFormWeb(
             }
             
             // Coverage
-            FormField("Покрытие") {
+            FormField(Strings.coverage()) {
                 Div(
                     attrs = {
                         style {
@@ -213,7 +214,7 @@ fun AddLocationFormWeb(
             }
             
             // Lighting
-            FormField("Освещение") {
+            FormField(Strings.lighting()) {
                 Div(
                     attrs = {
                         style {
@@ -232,7 +233,7 @@ fun AddLocationFormWeb(
             }
             
             // Inventory
-            FormField("Инвентарь") {
+            FormField(Strings.inventory()) {
                 Textarea(
                     attrs = {
                         value(inventory)
@@ -250,7 +251,7 @@ fun AddLocationFormWeb(
             }
             
             // Cleanliness
-            FormField("Чистота") {
+            FormField(Strings.cleanliness()) {
                 Div(
                     attrs = {
                         style {
@@ -269,7 +270,7 @@ fun AddLocationFormWeb(
             }
             
             // Noise level
-            FormField("Уровень шума") {
+            FormField(Strings.noiseLevel()) {
                 Div(
                     attrs = {
                         style {
@@ -288,7 +289,7 @@ fun AddLocationFormWeb(
             }
             
             // Rating
-            FormField("Рейтинг: $rating/5") {
+            FormField("${Strings.rating()}: $rating/5") {
                 Input(
                     attrs = {
                         type(InputType.Range)
@@ -305,7 +306,7 @@ fun AddLocationFormWeb(
             }
             
             // Status
-            FormField("Статус") {
+            FormField(Strings.status()) {
                 Div(
                     attrs = {
                         style {
@@ -324,7 +325,7 @@ fun AddLocationFormWeb(
             }
             
             // Notes
-            FormField("Заметки") {
+            FormField(Strings.notes()) {
                 Textarea(
                     attrs = {
                         value(notes)
@@ -342,7 +343,7 @@ fun AddLocationFormWeb(
             }
             
             // Photos
-            FormField("Фото (через запятую)") {
+            FormField(Strings.photosCommaSeparated()) {
                 Input(
                     attrs = {
                         value(photos)
@@ -401,7 +402,7 @@ fun AddLocationFormWeb(
                     }
                 }
             ) {
-                Text("Сохранить")
+                Text(Strings.save())
             }
         }
     }

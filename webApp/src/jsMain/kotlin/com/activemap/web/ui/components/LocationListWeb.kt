@@ -5,6 +5,7 @@ import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import com.activemap.shared.model.*
 import com.activemap.shared.model.LocationFilter
+import com.activemap.shared.resources.Strings
 
 @Composable
 fun LocationListWeb(
@@ -30,7 +31,7 @@ fun LocationListWeb(
                 onInput { event -> 
                     onFilterChange(filter.copy(searchQuery = event.value))
                 }
-                placeholder("Поиск по названию...")
+                placeholder(Strings.searchPlaceholder())
                 style {
                     padding(12.px)
                     margin(16.px)
@@ -54,7 +55,7 @@ fun LocationListWeb(
                 }
             }
         ) {
-            FilterChip("Все типы", filter.activityType == null) {
+            FilterChip(Strings.allTypes(), filter.activityType == null) {
                 onFilterChange(filter.copy(activityType = null))
             }
             ActivityType.values().forEach { type ->
@@ -76,7 +77,7 @@ fun LocationListWeb(
                 }
             }
         ) {
-            FilterChip("Все статусы", filter.status == null) {
+            FilterChip(Strings.allStatuses(), filter.status == null) {
                 onFilterChange(filter.copy(status = null))
             }
             VisitStatus.values().forEach { status ->
@@ -165,7 +166,7 @@ fun LocationListItemWeb(location: Location, onClick: () -> Unit) {
                 }
             }
         ) {
-            Text("Тип: ${location.activityType.name}")
+            Text("${Strings.type()}: ${location.activityType.name}")
         }
         
         P(
@@ -176,7 +177,7 @@ fun LocationListItemWeb(location: Location, onClick: () -> Unit) {
                 }
             }
         ) {
-            Text("Статус: ${location.status.name}")
+            Text("${Strings.status()}: ${location.status.name}")
         }
         
         P(
@@ -187,7 +188,7 @@ fun LocationListItemWeb(location: Location, onClick: () -> Unit) {
                 }
             }
         ) {
-            Text("Рейтинг: ${location.rating}/5")
+            Text("${Strings.rating()}: ${location.rating}/5")
         }
     }
 }

@@ -12,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.activemap.shared.model.*
+import com.activemap.shared.resources.Strings
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -31,15 +32,15 @@ fun LocationDetailDesktop(
                 title = { Text(location.name) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Назад")
+                        Icon(Icons.Default.ArrowBack, contentDescription = Strings.back())
                     }
                 },
                 actions = {
                     IconButton(onClick = { isEditing = !isEditing }) {
-                        Icon(Icons.Default.Edit, contentDescription = "Редактировать")
+                        Icon(Icons.Default.Edit, contentDescription = Strings.edit())
                     }
                     IconButton(onClick = { onDelete(location) }) {
-                        Icon(Icons.Default.Delete, contentDescription = "Удалить")
+                        Icon(Icons.Default.Delete, contentDescription = Strings.delete())
                     }
                 }
             )
@@ -82,72 +83,72 @@ fun LocationDetailContentDesktop(
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "Тип: ${location.activityType.name}",
+            text = "${Strings.type()}: ${location.activityType.name}",
             style = MaterialTheme.typography.bodyLarge
         )
         Text(
-            text = "Статус: ${location.status.name}",
+            text = "${Strings.status()}: ${location.status.name}",
             style = MaterialTheme.typography.bodyLarge
         )
         Spacer(modifier = Modifier.height(16.dp))
         
         // Coordinates
         Text(
-            text = "Координаты",
+            text = Strings.coordinates(),
             style = MaterialTheme.typography.titleMedium
         )
         Text(
-            text = "Широта: ${location.latitude}",
+            text = "${Strings.latitude()}: ${location.latitude}",
             style = MaterialTheme.typography.bodyMedium
         )
         Text(
-            text = "Долгота: ${location.longitude}",
+            text = "${Strings.longitude()}: ${location.longitude}",
             style = MaterialTheme.typography.bodyMedium
         )
         Spacer(modifier = Modifier.height(16.dp))
         
         // Ratings
         Text(
-            text = "Оценки",
+            text = Strings.ratings(),
             style = MaterialTheme.typography.titleMedium
         )
-        RatingRow("Покрытие", location.coverage.name)
-        RatingRow("Освещение", location.lighting.name)
-        RatingRow("Чистота", location.cleanliness.name)
-        RatingRow("Шум", location.noiseLevel.name)
-        RatingRow("Рейтинг", "${location.rating}/5")
+        RatingRow(Strings.coverage(), location.coverage.name)
+        RatingRow(Strings.lighting(), location.lighting.name)
+        RatingRow(Strings.cleanliness(), location.cleanliness.name)
+        RatingRow(Strings.noiseLevel(), location.noiseLevel.name)
+        RatingRow(Strings.rating(), "${location.rating}/5")
         Spacer(modifier = Modifier.height(16.dp))
         
         // Inventory
         Text(
-            text = "Инвентарь",
+            text = Strings.inventory(),
             style = MaterialTheme.typography.titleMedium
         )
         Text(
-            text = location.inventory.ifEmpty { "Не указан" },
+            text = location.inventory.ifEmpty { Strings.notSpecified() },
             style = MaterialTheme.typography.bodyMedium
         )
         Spacer(modifier = Modifier.height(16.dp))
         
         // Notes
         Text(
-            text = "Заметки",
+            text = Strings.notes(),
             style = MaterialTheme.typography.titleMedium
         )
         Text(
-            text = location.notes.ifEmpty { "Нет заметок" },
+            text = location.notes.ifEmpty { Strings.noNotes() },
             style = MaterialTheme.typography.bodyMedium
         )
         Spacer(modifier = Modifier.height(16.dp))
         
         // Photos
         Text(
-            text = "Фото",
+            text = Strings.photos(),
             style = MaterialTheme.typography.titleMedium
         )
         if (location.photos.isEmpty()) {
             Text(
-                text = "Нет фото",
+                text = Strings.noPhotos(),
                 style = MaterialTheme.typography.bodyMedium
             )
         } else {

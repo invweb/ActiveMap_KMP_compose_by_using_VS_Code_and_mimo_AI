@@ -4,6 +4,7 @@ import androidx.compose.runtime.*
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import com.activemap.shared.model.*
+import com.activemap.shared.resources.Strings
 
 @Composable
 fun LocationDetailWeb(
@@ -52,7 +53,7 @@ fun LocationDetailWeb(
                     }
                 }
             ) {
-                Text("← Назад")
+                Text(Strings.back())
             }
             
             Div(
@@ -76,7 +77,7 @@ fun LocationDetailWeb(
                         }
                     }
                 ) {
-                    Text(if (isEditing) "Отмена" else "Редактировать")
+                    Text(if (isEditing) Strings.cancel() else Strings.edit())
                 }
                 
                 Button(
@@ -92,7 +93,7 @@ fun LocationDetailWeb(
                         }
                     }
                 ) {
-                    Text("Удалить")
+                    Text(Strings.delete())
                 }
             }
         }
@@ -147,7 +148,7 @@ fun LocationDetailContentWeb(location: Location) {
             }
         }
     ) {
-        Text("Тип: ${location.activityType.name}")
+        Text("${Strings.type()}: ${location.activityType.name}")
     }
     
     P(
@@ -159,7 +160,7 @@ fun LocationDetailContentWeb(location: Location) {
             }
         }
     ) {
-        Text("Статус: ${location.status.name}")
+        Text("${Strings.status()}: ${location.status.name}")
     }
     
     // Coordinates
@@ -172,7 +173,7 @@ fun LocationDetailContentWeb(location: Location) {
             }
         }
     ) {
-        Text("Координаты")
+        Text(Strings.coordinates())
     }
     
     P(
@@ -183,7 +184,7 @@ fun LocationDetailContentWeb(location: Location) {
             }
         }
     ) {
-        Text("Широта: ${location.latitude}")
+        Text("${Strings.latitude()}: ${location.latitude}")
     }
     
     P(
@@ -194,7 +195,7 @@ fun LocationDetailContentWeb(location: Location) {
             }
         }
     ) {
-        Text("Долгота: ${location.longitude}")
+        Text("${Strings.longitude()}: ${location.longitude}")
     }
     
     // Ratings
@@ -207,14 +208,14 @@ fun LocationDetailContentWeb(location: Location) {
             }
         }
     ) {
-        Text("Оценки")
+        Text(Strings.ratings())
     }
     
-    RatingRowWeb("Покрытие", location.coverage.name)
-    RatingRowWeb("Освещение", location.lighting.name)
-    RatingRowWeb("Чистота", location.cleanliness.name)
-    RatingRowWeb("Шум", location.noiseLevel.name)
-    RatingRowWeb("Рейтинг", "${location.rating}/5")
+    RatingRowWeb(Strings.coverage(), location.coverage.name)
+    RatingRowWeb(Strings.lighting(), location.lighting.name)
+    RatingRowWeb(Strings.cleanliness(), location.cleanliness.name)
+    RatingRowWeb(Strings.noiseLevel(), location.noiseLevel.name)
+    RatingRowWeb(Strings.rating(), "${location.rating}/5")
     
     // Inventory
     H2(
@@ -226,7 +227,7 @@ fun LocationDetailContentWeb(location: Location) {
             }
         }
     ) {
-        Text("Инвентарь")
+        Text(Strings.inventory())
     }
     
     P(
@@ -237,7 +238,7 @@ fun LocationDetailContentWeb(location: Location) {
             }
         }
     ) {
-        Text(location.inventory.ifEmpty { "Не указан" })
+        Text(location.inventory.ifEmpty { Strings.notSpecified() })
     }
     
     // Notes
@@ -250,7 +251,7 @@ fun LocationDetailContentWeb(location: Location) {
             }
         }
     ) {
-        Text("Заметки")
+        Text(Strings.notes())
     }
     
     P(
@@ -261,7 +262,7 @@ fun LocationDetailContentWeb(location: Location) {
             }
         }
     ) {
-        Text(location.notes.ifEmpty { "Нет заметок" })
+        Text(location.notes.ifEmpty { Strings.noNotes() })
     }
     
     // Photos
@@ -274,7 +275,7 @@ fun LocationDetailContentWeb(location: Location) {
             }
         }
     ) {
-        Text("Фото")
+        Text(Strings.photos())
     }
     
     if (location.photos.isEmpty()) {
@@ -285,7 +286,7 @@ fun LocationDetailContentWeb(location: Location) {
                 }
             }
         ) {
-            Text("Нет фото")
+            Text(Strings.noPhotos())
         }
     } else {
         location.photos.forEach { photoUrl ->

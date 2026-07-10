@@ -5,6 +5,7 @@ import android.graphics.Color
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Route
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -14,6 +15,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.activemap.shared.model.ActivityType
 import com.activemap.shared.model.Location
+import com.activemap.shared.model.Route
+import com.activemap.shared.resources.Strings
 import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
@@ -22,12 +25,17 @@ import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.MapEventsOverlay
+import org.osmdroid.views.overlay.Polyline
 
 @Composable
 fun MapView(
     locations: List<Location>,
     onLocationClick: (Location) -> Unit,
     onLongPress: (Double, Double) -> Unit = { _, _ -> },
+    isRouteMode: Boolean = false,
+    routeStart: Pair<Double, Double>? = null,
+    routeEnd: Pair<Double, Double>? = null,
+    currentRoute: Route? = null,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -52,8 +60,12 @@ fun MapView(
 
                         override fun longPressHelper(p: GeoPoint?): Boolean {
                             p?.let {
-                                pickedPoint = it
-                                onLongPress(it.latitude, it.longitude)
+                                if (isRouteMode) {
+                                    onLongPress(it.latitude, it.longitude)
+                                } else {
+                                    pickedPoint = it
+                                    onLongPress(it.latitude, it.longitude)
+                                }
                             }
                             return true
                         }
@@ -62,16 +74,54 @@ fun MapView(
                 }
             },
             update = { mapView ->
-                mapView.overlays.removeAll { it is Marker }
+                mapView.overlays.removeAll { it is Marker || it is Polyline }
 
+                if (!isRouteMode) {
                 pickedPoint?.let { point ->
                     val pickMarker = Marker(mapView).apply {
                         position = point
                         setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-                        title = "Выбранная точка"
+                        title = Strings.selectPoint()
                         snippet = "%.6f, %.6f".format(point.latitude, point.longitude)
                     }
                     mapView.overlays.add(pickMarker)
+                }
+                }
+
+                if (isRouteMode) {
+                    routeStart?.let { start ->
+                        val startMarker = Marker(mapView).apply {
+                            position = GeoPoint(start.first, start.second)
+                            setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+                            title = Strings.routeStart()
+                            snippet = "%.6f, %.6f".format(start.first, start.second)
+                        }
+                        mapView.overlays.add(startMarker)
+                    }
+                    
+                    routeEnd?.let { end ->
+                        val endMarker = Marker(mapView).apply {
+                            position = GeoPoint(end.first, end.second)
+                            setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+                            title = Strings.routeEnd()
+                            snippet = "%.6f, %.6f".format(end.first, end.second)
+                        }
+                        mapView.overlays.add(endMarker)
+                    }
+                }
+
+                currentRoute?.let { route ->
+                    val polyline = Polyline().apply {
+                        outlinePaint.color = Color.BLUE
+                        outlinePaint.strokeWidth = 8f
+                        setPoints(route.points.map { GeoPoint(it.latitude, it.longitude) })
+                    }
+                    mapView.overlays.add(polyline)
+                    
+                    val boundingBox = BoundingBox.fromGeoPoints(
+                        route.points.map { GeoPoint(it.latitude, it.longitude) }
+                    )
+                    mapView.zoomToBoundingBox(boundingBox.increaseByScale(1.2f), true)
                 }
 
                 locations.forEach { location ->
@@ -99,7 +149,7 @@ fun MapView(
                 .padding(16.dp),
             containerColor = MaterialTheme.colorScheme.primaryContainer
         ) {
-            Icon(Icons.Default.LocationOn, contentDescription = "Центр на мне")
+            Icon(Icons.Default.LocationOn, contentDescription = Strings.centerOnMe())
         }
 
         Card(
@@ -108,7 +158,7 @@ fun MapView(
                 .padding(16.dp)
         ) {
             Text(
-                text = "Долгое нажатие — выбор точки",
+                text = if (isRouteMode) Strings.selectRoutePoints() else Strings.selectPoint(),
                 modifier = Modifier.padding(12.dp),
                 style = MaterialTheme.typography.bodySmall
             )

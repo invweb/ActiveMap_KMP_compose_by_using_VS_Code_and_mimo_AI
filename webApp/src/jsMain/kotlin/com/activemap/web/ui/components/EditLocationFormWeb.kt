@@ -4,6 +4,7 @@ import androidx.compose.runtime.*
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import com.activemap.shared.model.*
+import com.activemap.shared.resources.Strings
 
 @Composable
 fun EditLocationFormWeb(
@@ -36,7 +37,7 @@ fun EditLocationFormWeb(
         }
     ) {
         // Name
-        FormField("Название *") {
+        FormField(Strings.nameRequired()) {
             Input(
                 attrs = {
                     value(name)
@@ -53,7 +54,7 @@ fun EditLocationFormWeb(
         }
         
         // Activity type
-        FormField("Тип активности") {
+        FormField(Strings.activityType()) {
             Div(
                 attrs = {
                     style {
@@ -72,7 +73,7 @@ fun EditLocationFormWeb(
         }
         
         // Coordinates
-        FormField("Координаты *") {
+        FormField(Strings.coordinatesRequired()) {
             Div(
                 attrs = {
                     style {
@@ -92,7 +93,7 @@ fun EditLocationFormWeb(
                         attrs = {
                             value(latitude)
                             onInput { event -> latitude = event.value }
-                            placeholder("Широта")
+                            placeholder(Strings.latitude())
                             style {
                                 width(100.percent)
                                 padding(12.px)
@@ -114,7 +115,7 @@ fun EditLocationFormWeb(
                         attrs = {
                             value(longitude)
                             onInput { event -> longitude = event.value }
-                            placeholder("Долгота")
+                            placeholder(Strings.longitude())
                             style {
                                 width(100.percent)
                                 padding(12.px)
@@ -129,7 +130,7 @@ fun EditLocationFormWeb(
         }
         
         // Coverage
-        FormField("Покрытие") {
+        FormField(Strings.coverage()) {
             Div(
                 attrs = {
                     style {
@@ -148,7 +149,7 @@ fun EditLocationFormWeb(
         }
         
         // Lighting
-        FormField("Освещение") {
+        FormField(Strings.lighting()) {
             Div(
                 attrs = {
                     style {
@@ -167,7 +168,7 @@ fun EditLocationFormWeb(
         }
         
         // Inventory
-        FormField("Инвентарь") {
+        FormField(Strings.inventory()) {
             Textarea(
                 attrs = {
                     value(inventory)
@@ -185,7 +186,7 @@ fun EditLocationFormWeb(
         }
         
         // Cleanliness
-        FormField("Чистота") {
+        FormField(Strings.cleanliness()) {
             Div(
                 attrs = {
                     style {
@@ -204,7 +205,7 @@ fun EditLocationFormWeb(
         }
         
         // Noise level
-        FormField("Уровень шума") {
+        FormField(Strings.noiseLevel()) {
             Div(
                 attrs = {
                     style {
@@ -223,7 +224,7 @@ fun EditLocationFormWeb(
         }
         
         // Rating
-        FormField("Рейтинг: $rating/5") {
+        FormField("${Strings.rating()}: $rating/5") {
             Input(
                 attrs = {
                     type(InputType.Range)
@@ -240,7 +241,7 @@ fun EditLocationFormWeb(
         }
         
         // Status
-        FormField("Статус") {
+        FormField(Strings.status()) {
             Div(
                 attrs = {
                     style {
@@ -259,7 +260,7 @@ fun EditLocationFormWeb(
         }
         
         // Notes
-        FormField("Заметки") {
+        FormField(Strings.notes()) {
             Textarea(
                 attrs = {
                     value(notes)
@@ -277,7 +278,7 @@ fun EditLocationFormWeb(
         }
         
         // Photos
-        FormField("Фото (через запятую)") {
+        FormField(Strings.photosCommaSeparated()) {
             Input(
                 attrs = {
                     value(photos)
@@ -335,7 +336,7 @@ fun EditLocationFormWeb(
                 }
             }
         ) {
-            Text("Сохранить изменения")
+            Text(Strings.saveChanges())
         }
         
         // Cancel button
@@ -355,7 +356,7 @@ fun EditLocationFormWeb(
                 }
             }
         ) {
-            Text("Отмена")
+            Text(Strings.cancel())
         }
     }
 }

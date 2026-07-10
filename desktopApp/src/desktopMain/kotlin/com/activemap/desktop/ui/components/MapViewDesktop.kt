@@ -18,28 +18,31 @@ import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.unit.dp
 import com.activemap.shared.model.ActivityType
 import com.activemap.shared.model.Location
+import com.activemap.shared.model.Route
 
 @Composable
 fun MapViewDesktop(
     locations: List<Location>,
     onLocationClick: (Location) -> Unit,
+    onMapClick: (Double, Double) -> Unit = { _, _ -> },
+    isRouteMode: Boolean = false,
+    routeStart: Pair<Double, Double>? = null,
+    routeEnd: Pair<Double, Double>? = null,
+    currentRoute: Route? = null,
     modifier: Modifier = Modifier
 ) {
     Box(modifier = modifier.fillMaxSize()) {
-        // Simple map visualization using Canvas
         Canvas(
             modifier = Modifier
                 .fillMaxSize()
                 .clickable { /* Handle map click */ }
         ) {
-            // Draw background (light gray for map)
             drawRect(
                 color = Color(0xFFF0F0F0),
                 topLeft = Offset.Zero,
                 size = size
             )
             
-            // Draw grid lines for reference
             val gridSpacing = 50.dp.toPx()
             for (x in 0..size.width.toInt() step gridSpacing.toInt()) {
                 drawLine(
@@ -58,27 +61,61 @@ fun MapViewDesktop(
                 )
             }
             
-            // Calculate bounds for all locations
-            if (locations.isNotEmpty()) {
-                val minLat = locations.minOf { it.latitude }
-                val maxLat = locations.maxOf { it.latitude }
-                val minLon = locations.minOf { it.longitude }
-                val maxLon = locations.maxOf { it.longitude }
+            val allPoints = mutableListOf<Pair<Double, Double>>()
+            locations.forEach { allPoints.add(it.latitude to it.longitude) }
+            routeStart?.let { allPoints.add(it) }
+            routeEnd?.let { allPoints.add(it) }
+            currentRoute?.points?.forEach { allPoints.add(it.latitude to it.longitude) }
+            
+            if (allPoints.isNotEmpty()) {
+                val minLat = allPoints.minOf { it.first }
+                val maxLat = allPoints.maxOf { it.first }
+                val minLon = allPoints.minOf { it.second }
+                val maxLon = allPoints.maxOf { it.second }
                 
-                val latRange = maxLat - minLat
-                val lonRange = maxLon - minLon
+                val latRange = (maxLat - minLat).coerceAtLeast(0.001)
+                val lonRange = (maxLon - minLon).coerceAtLeast(0.001)
                 
-                // Add padding
                 val padding = 50f
                 val mapWidth = size.width - padding * 2
                 val mapHeight = size.height - padding * 2
                 
-                // Draw markers
+                fun toScreen(lat: Double, lon: Double): Offset {
+                    val x = padding + ((lon - minLon) / lonRange * mapWidth).toFloat()
+                    val y = padding + ((maxLat - lat) / latRange * mapHeight).toFloat()
+                    return Offset(x, y)
+                }
+                
+                currentRoute?.let { route ->
+                    if (route.points.size >= 2) {
+                        for (i in 0 until route.points.size - 1) {
+                            val start = toScreen(route.points[i].latitude, route.points[i].longitude)
+                            val end = toScreen(route.points[i + 1].latitude, route.points[i + 1].longitude)
+                            drawLine(
+                                color = Color.Blue,
+                                start = start,
+                                end = end,
+                                strokeWidth = 6f
+                            )
+                        }
+                    }
+                }
+                
+                routeStart?.let { start ->
+                    val pos = toScreen(start.first, start.second)
+                    drawCircle(color = Color.Green, radius = 12f, center = pos)
+                    drawCircle(color = Color.Black, radius = 12f, center = pos, style = androidx.compose.ui.graphics.drawscope.Stroke(width = 2f))
+                }
+                
+                routeEnd?.let { end ->
+                    val pos = toScreen(end.first, end.second)
+                    drawCircle(color = Color.Red, radius = 12f, center = pos)
+                    drawCircle(color = Color.Black, radius = 12f, center = pos, style = androidx.compose.ui.graphics.drawscope.Stroke(width = 2f))
+                }
+                
                 locations.forEach { location ->
-                    val x = padding + ((location.longitude - minLon) / lonRange * mapWidth).toFloat()
-                    val y = padding + ((maxLat - location.latitude) / latRange * mapHeight).toFloat()
+                    val pos = toScreen(location.latitude, location.longitude)
                     
-                    // Draw marker based on activity type
                     val markerColor = when (location.activityType) {
                         ActivityType.SPORT -> Color.Red
                         ActivityType.WORK -> Color.Blue
@@ -87,24 +124,21 @@ fun MapViewDesktop(
                         ActivityType.ENTERTAINMENT -> Color.Magenta
                     }
                     
-                    // Draw circle marker
                     drawCircle(
                         color = markerColor,
                         radius = 15f,
-                        center = Offset(x, y),
+                        center = pos,
                         style = Fill
                     )
                     
-                    // Draw marker border
                     drawCircle(
                         color = Color.Black,
                         radius = 15f,
-                        center = Offset(x, y),
+                        center = pos,
                         style = androidx.compose.ui.graphics.drawscope.Stroke(width = 2f)
                     )
                 }
             } else {
-                // Draw "No locations" text
                 drawContext.canvas.nativeCanvas.apply {
                     val paint = android.graphics.Paint().apply {
                         color = android.graphics.Color.GRAY
@@ -121,7 +155,6 @@ fun MapViewDesktop(
             }
         }
         
-        // "My location" button
         FloatingActionButton(
             onClick = {
                 // TODO: Get actual location
@@ -134,7 +167,6 @@ fun MapViewDesktop(
             Icon(Icons.Default.LocationOn, contentDescription = "Центр на мне")
         }
         
-        // Legend
         Card(
             modifier = Modifier
                 .align(Alignment.TopStart)
@@ -152,11 +184,14 @@ fun MapViewDesktop(
                 LegendItem("Отдых", Color.Green)
                 LegendItem("Образование", Color.Yellow)
                 LegendItem("Развлечения", Color.Magenta)
+                if (isRouteMode) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    LegendItem("Начало маршрута", Color.Green)
+                    LegendItem("Конец маршрута", Color.Red)
+                    LegendItem("Маршрут", Color.Blue)
+                }
             }
         }
-        
-        // Click handler overlay (simplified)
-        // In a real app, you would implement proper click detection
     }
 }
 

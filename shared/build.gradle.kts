@@ -34,6 +34,9 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
                 implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
+                implementation("io.ktor:ktor-client-core:2.3.7")
+                implementation("io.ktor:ktor-client-content-negotiation:2.3.7")
+                implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.7")
             }
         }
         
@@ -46,6 +49,7 @@ kotlin {
                 implementation("androidx.activity:activity-compose:1.8.2")
                 implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
                 implementation("com.google.android.material:material:1.11.0")
+                implementation("io.ktor:ktor-client-okhttp:2.3.7")
             }
         }
         
@@ -54,6 +58,13 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.8.1")
                 implementation(compose.desktop.common)
                 implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
+                implementation("io.ktor:ktor-client-java:2.3.7")
+            }
+        }
+        
+        val jsMain by getting {
+            dependencies {
+                implementation("io.ktor:ktor-client-js:2.3.7")
             }
         }
     }

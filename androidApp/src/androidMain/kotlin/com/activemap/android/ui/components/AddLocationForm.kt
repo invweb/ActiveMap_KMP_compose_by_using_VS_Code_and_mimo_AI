@@ -19,6 +19,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.activemap.shared.model.*
+import com.activemap.shared.resources.Strings
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -63,10 +64,10 @@ fun AddLocationForm(
             .navigationBarsPadding()
     ) {
         TopAppBar(
-            title = { Text("Добавить локацию") },
+            title = { Text(Strings.addLocation()) },
             navigationIcon = {
                 IconButton(onClick = onCancel) {
-                    Icon(Icons.Default.Close, contentDescription = "Закрыть")
+                    Icon(Icons.Default.Close, contentDescription = Strings.close())
                 }
             }
         )
@@ -84,7 +85,7 @@ fun AddLocationForm(
                 modifier = Modifier
                     .fillMaxWidth()
                     .focusRequester(nameFocusRequester),
-                label = { Text("Название *") },
+                label = { Text(Strings.nameRequired()) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Next,
@@ -92,11 +93,11 @@ fun AddLocationForm(
                 ),
                 isError = showError && name.isBlank(),
                 supportingText = if (showError && name.isBlank()) {
-                    { Text("Название обязательно") }
+                    { Text(Strings.nameIsRequired()) }
                 } else null
             )
 
-            Text("Тип активности", style = MaterialTheme.typography.titleMedium)
+            Text(Strings.activityType(), style = MaterialTheme.typography.titleMedium)
             Row(
                 modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -110,7 +111,7 @@ fun AddLocationForm(
                 }
             }
 
-            Text("Координаты *", style = MaterialTheme.typography.titleMedium)
+            Text(Strings.coordinatesRequired(), style = MaterialTheme.typography.titleMedium)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -119,7 +120,7 @@ fun AddLocationForm(
                     value = latitude,
                     onValueChange = { latitude = it },
                     modifier = Modifier.weight(1f),
-                    label = { Text("Широта") },
+                    label = { Text(Strings.latitude()) },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Decimal,
@@ -131,7 +132,7 @@ fun AddLocationForm(
                     value = longitude,
                     onValueChange = { longitude = it },
                     modifier = Modifier.weight(1f),
-                    label = { Text("Долгота") },
+                    label = { Text(Strings.longitude()) },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Decimal,
@@ -141,7 +142,7 @@ fun AddLocationForm(
                 )
             }
 
-            Text("Покрытие", style = MaterialTheme.typography.titleMedium)
+            Text(Strings.coverage(), style = MaterialTheme.typography.titleMedium)
             Row(
                 modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -155,7 +156,7 @@ fun AddLocationForm(
                 }
             }
 
-            Text("Освещение", style = MaterialTheme.typography.titleMedium)
+            Text(Strings.lighting(), style = MaterialTheme.typography.titleMedium)
             Row(
                 modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -173,12 +174,12 @@ fun AddLocationForm(
                 value = inventory,
                 onValueChange = { inventory = it },
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text("Инвентарь") },
+                label = { Text(Strings.inventory()) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
             )
 
-            Text("Чистота", style = MaterialTheme.typography.titleMedium)
+            Text(Strings.cleanliness(), style = MaterialTheme.typography.titleMedium)
             Row(
                 modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -192,7 +193,7 @@ fun AddLocationForm(
                 }
             }
 
-            Text("Уровень шума", style = MaterialTheme.typography.titleMedium)
+            Text(Strings.noiseLevel(), style = MaterialTheme.typography.titleMedium)
             Row(
                 modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -206,7 +207,7 @@ fun AddLocationForm(
                 }
             }
 
-            Text("Рейтинг: $rating/5", style = MaterialTheme.typography.titleMedium)
+            Text("${Strings.rating()}: $rating/5", style = MaterialTheme.typography.titleMedium)
             Slider(
                 value = rating.toFloat(),
                 onValueChange = { rating = it.toInt() },
@@ -214,7 +215,7 @@ fun AddLocationForm(
                 steps = 3
             )
 
-            Text("Статус", style = MaterialTheme.typography.titleMedium)
+            Text(Strings.status(), style = MaterialTheme.typography.titleMedium)
             Row(
                 modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -232,7 +233,7 @@ fun AddLocationForm(
                 value = notes,
                 onValueChange = { notes = it },
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text("Заметки") },
+                label = { Text(Strings.notes()) },
                 minLines = 3,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
             )
@@ -241,7 +242,7 @@ fun AddLocationForm(
                 value = photos,
                 onValueChange = { photos = it },
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text("Фото (через запятую)") },
+                label = { Text(Strings.photosCommaSeparated()) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done)
             )
@@ -275,7 +276,7 @@ fun AddLocationForm(
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Сохранить")
+                Text(Strings.save())
             }
 
             Spacer(modifier = Modifier.height(32.dp))

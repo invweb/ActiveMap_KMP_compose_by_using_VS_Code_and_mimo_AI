@@ -2,6 +2,7 @@ package com.activemap.shared.viewmodel
 
 import com.activemap.shared.model.*
 import com.activemap.shared.repository.LocationRepository
+import com.activemap.shared.service.OsrmService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -14,6 +15,7 @@ class LocationViewModel(
     private val repository: LocationRepository
 ) {
     private val viewModelScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    private val osrmService = OsrmService()
     
     private val _locations = MutableStateFlow<List<Location>>(emptyList())
     val locations: StateFlow<List<Location>> = _locations.asStateFlow()
@@ -29,6 +31,24 @@ class LocationViewModel(
     
     private val _pickedLatLng = MutableStateFlow<Pair<Double, Double>?>(null)
     val pickedLatLng: StateFlow<Pair<Double, Double>?> = _pickedLatLng.asStateFlow()
+    
+    private val _isRouteMode = MutableStateFlow(false)
+    val isRouteMode: StateFlow<Boolean> = _isRouteMode.asStateFlow()
+    
+    private val _routeStart = MutableStateFlow<Pair<Double, Double>?>(null)
+    val routeStart: StateFlow<Pair<Double, Double>?> = _routeStart.asStateFlow()
+    
+    private val _routeEnd = MutableStateFlow<Pair<Double, Double>?>(null)
+    val routeEnd: StateFlow<Pair<Double, Double>?> = _routeEnd.asStateFlow()
+    
+    private val _currentRoute = MutableStateFlow<Route?>(null)
+    val currentRoute: StateFlow<Route?> = _currentRoute.asStateFlow()
+    
+    private val _isCalculatingRoute = MutableStateFlow(false)
+    val isCalculatingRoute: StateFlow<Boolean> = _isCalculatingRoute.asStateFlow()
+    
+    private val _routeError = MutableStateFlow<String?>(null)
+    val routeError: StateFlow<String?> = _routeError.asStateFlow()
     
     init {
         viewModelScope.launch {
@@ -88,6 +108,54 @@ class LocationViewModel(
         viewModelScope.launch {
             repository.deleteLocation(id)
             _selectedLocation.value = null
+        }
+    }
+    
+    fun toggleRouteMode() {
+        _isRouteMode.value = !_isRouteMode.value
+        if (!_isRouteMode.value) {
+            clearRoute()
+        }
+    }
+    
+    fun setRoutePoint(lat: Double, lng: Double) {
+        if (_routeStart.value == null) {
+            _routeStart.value = lat to lng
+            _routeEnd.value = null
+            _currentRoute.value = null
+        } else if (_routeEnd.value == null) {
+            _routeEnd.value = lat to lng
+            calculateRoute()
+        }
+    }
+    
+    fun clearRoute() {
+        _routeStart.value = null
+        _routeEnd.value = null
+        _currentRoute.value = null
+        _routeError.value = null
+    }
+    
+    private fun calculateRoute() {
+        val start = _routeStart.value ?: return
+        val end = _routeEnd.value ?: return
+        
+        viewModelScope.launch {
+            _isCalculatingRoute.value = true
+            _routeError.value = null
+            try {
+                val route = osrmService.getRoute(
+                    startLat = start.first,
+                    startLng = start.second,
+                    endLat = end.first,
+                    endLng = end.second
+                )
+                _currentRoute.value = route
+            } catch (e: Exception) {
+                _routeError.value = e.message ?: "Ошибка построения маршрута"
+            } finally {
+                _isCalculatingRoute.value = false
+            }
         }
     }
 }

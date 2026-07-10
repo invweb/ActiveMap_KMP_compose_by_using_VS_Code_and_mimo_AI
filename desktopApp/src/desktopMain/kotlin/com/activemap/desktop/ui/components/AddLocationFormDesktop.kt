@@ -10,6 +10,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.activemap.shared.model.*
+import com.activemap.shared.resources.Strings
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -37,10 +38,10 @@ fun AddLocationFormDesktop(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Добавить локацию") },
+                title = { Text(Strings.addLocation()) },
                 navigationIcon = {
                     IconButton(onClick = onCancel) {
-                        Icon(Icons.Default.Close, contentDescription = "Закрыть")
+                        Icon(Icons.Default.Close, contentDescription = Strings.close())
                     }
                 }
             )
@@ -59,15 +60,15 @@ fun AddLocationFormDesktop(
                 value = name,
                 onValueChange = { name = it },
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text("Название *") },
+                label = { Text(Strings.nameRequired()) },
                 isError = showError && name.isBlank(),
                 supportingText = if (showError && name.isBlank()) {
-                    { Text("Название обязательно") }
+                    { Text(Strings.nameIsRequired()) }
                 } else null
             )
             
             // Activity type
-            Text("Тип активности", style = MaterialTheme.typography.titleMedium)
+            Text(Strings.activityType(), style = MaterialTheme.typography.titleMedium)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -82,7 +83,7 @@ fun AddLocationFormDesktop(
             }
             
             // Coordinates (required)
-            Text("Координаты *", style = MaterialTheme.typography.titleMedium)
+            Text(Strings.coordinatesRequired(), style = MaterialTheme.typography.titleMedium)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -91,20 +92,20 @@ fun AddLocationFormDesktop(
                     value = latitude,
                     onValueChange = { latitude = it },
                     modifier = Modifier.weight(1f),
-                    label = { Text("Широта") },
+                    label = { Text(Strings.latitude()) },
                     isError = showError && latitude.isBlank()
                 )
                 OutlinedTextField(
                     value = longitude,
                     onValueChange = { longitude = it },
                     modifier = Modifier.weight(1f),
-                    label = { Text("Долгота") },
+                    label = { Text(Strings.longitude()) },
                     isError = showError && longitude.isBlank()
                 )
             }
             
             // Coverage
-            Text("Покрытие", style = MaterialTheme.typography.titleMedium)
+            Text(Strings.coverage(), style = MaterialTheme.typography.titleMedium)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -119,7 +120,7 @@ fun AddLocationFormDesktop(
             }
             
             // Lighting
-            Text("Освещение", style = MaterialTheme.typography.titleMedium)
+            Text(Strings.lighting(), style = MaterialTheme.typography.titleMedium)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -138,11 +139,11 @@ fun AddLocationFormDesktop(
                 value = inventory,
                 onValueChange = { inventory = it },
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text("Инвентарь") }
+                label = { Text(Strings.inventory()) }
             )
             
             // Cleanliness
-            Text("Чистота", style = MaterialTheme.typography.titleMedium)
+            Text(Strings.cleanliness(), style = MaterialTheme.typography.titleMedium)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -157,7 +158,7 @@ fun AddLocationFormDesktop(
             }
             
             // Noise level
-            Text("Уровень шума", style = MaterialTheme.typography.titleMedium)
+            Text(Strings.noiseLevel(), style = MaterialTheme.typography.titleMedium)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -172,7 +173,7 @@ fun AddLocationFormDesktop(
             }
             
             // Rating
-            Text("Рейтинг: $rating/5", style = MaterialTheme.typography.titleMedium)
+            Text("${Strings.rating()}: $rating/5", style = MaterialTheme.typography.titleMedium)
             Slider(
                 value = rating.toFloat(),
                 onValueChange = { rating = it.toInt() },
@@ -181,7 +182,7 @@ fun AddLocationFormDesktop(
             )
             
             // Status
-            Text("Статус", style = MaterialTheme.typography.titleMedium)
+            Text(Strings.status(), style = MaterialTheme.typography.titleMedium)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -200,7 +201,7 @@ fun AddLocationFormDesktop(
                 value = notes,
                 onValueChange = { notes = it },
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text("Заметки") },
+                label = { Text(Strings.notes()) },
                 minLines = 3
             )
             
@@ -209,7 +210,7 @@ fun AddLocationFormDesktop(
                 value = photos,
                 onValueChange = { photos = it },
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text("Фото (через запятую)") }
+                label = { Text(Strings.photosCommaSeparated()) }
             )
             
             // Save button
@@ -242,7 +243,7 @@ fun AddLocationFormDesktop(
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Сохранить")
+                Text(Strings.save())
             }
         }
     }

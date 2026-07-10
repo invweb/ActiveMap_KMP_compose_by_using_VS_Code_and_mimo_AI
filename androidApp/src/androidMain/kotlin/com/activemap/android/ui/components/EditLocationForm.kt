@@ -8,6 +8,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.activemap.shared.model.*
+import com.activemap.shared.resources.Strings
 
 @Composable
 fun EditLocationForm(
@@ -42,11 +43,11 @@ fun EditLocationForm(
             value = name,
             onValueChange = { name = it },
             modifier = Modifier.fillMaxWidth(),
-            label = { Text("Название *") }
+            label = { Text(Strings.nameRequired()) }
         )
         
         // Activity type
-        Text("Тип активности", style = MaterialTheme.typography.titleMedium)
+        Text(Strings.activityType(), style = MaterialTheme.typography.titleMedium)
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -61,7 +62,7 @@ fun EditLocationForm(
         }
         
         // Coordinates
-        Text("Координаты *", style = MaterialTheme.typography.titleMedium)
+        Text(Strings.coordinatesRequired(), style = MaterialTheme.typography.titleMedium)
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -70,18 +71,18 @@ fun EditLocationForm(
                 value = latitude,
                 onValueChange = { latitude = it },
                 modifier = Modifier.weight(1f),
-                label = { Text("Широта") }
+                label = { Text(Strings.latitude()) }
             )
             OutlinedTextField(
                 value = longitude,
                 onValueChange = { longitude = it },
                 modifier = Modifier.weight(1f),
-                label = { Text("Долгота") }
+                label = { Text(Strings.longitude()) }
             )
         }
         
         // Coverage
-        Text("Покрытие", style = MaterialTheme.typography.titleMedium)
+        Text(Strings.coverage(), style = MaterialTheme.typography.titleMedium)
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -96,7 +97,7 @@ fun EditLocationForm(
         }
         
         // Lighting
-        Text("Освещение", style = MaterialTheme.typography.titleMedium)
+        Text(Strings.lighting(), style = MaterialTheme.typography.titleMedium)
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -115,11 +116,11 @@ fun EditLocationForm(
             value = inventory,
             onValueChange = { inventory = it },
             modifier = Modifier.fillMaxWidth(),
-            label = { Text("Инвентарь") }
+            label = { Text(Strings.inventory()) }
         )
         
         // Cleanliness
-        Text("Чистота", style = MaterialTheme.typography.titleMedium)
+        Text(Strings.cleanliness(), style = MaterialTheme.typography.titleMedium)
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -134,7 +135,7 @@ fun EditLocationForm(
         }
         
         // Noise level
-        Text("Уровень шума", style = MaterialTheme.typography.titleMedium)
+        Text(Strings.noiseLevel(), style = MaterialTheme.typography.titleMedium)
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -149,7 +150,7 @@ fun EditLocationForm(
         }
         
         // Rating
-        Text("Рейтинг: $rating/5", style = MaterialTheme.typography.titleMedium)
+        Text("${Strings.rating()}: $rating/5", style = MaterialTheme.typography.titleMedium)
         Slider(
             value = rating.toFloat(),
             onValueChange = { rating = it.toInt() },
@@ -158,7 +159,7 @@ fun EditLocationForm(
         )
         
         // Status
-        Text("Статус", style = MaterialTheme.typography.titleMedium)
+        Text(Strings.status(), style = MaterialTheme.typography.titleMedium)
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -177,7 +178,7 @@ fun EditLocationForm(
             value = notes,
             onValueChange = { notes = it },
             modifier = Modifier.fillMaxWidth(),
-            label = { Text("Заметки") },
+            label = { Text(Strings.notes()) },
             minLines = 3
         )
         
@@ -186,7 +187,7 @@ fun EditLocationForm(
             value = photos,
             onValueChange = { photos = it },
             modifier = Modifier.fillMaxWidth(),
-            label = { Text("Фото (через запятую)") }
+            label = { Text(Strings.photosCommaSeparated()) }
         )
         
         // Save button
@@ -218,7 +219,7 @@ fun EditLocationForm(
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Сохранить изменения")
+            Text(Strings.saveChanges())
         }
         
         // Cancel button
@@ -226,7 +227,7 @@ fun EditLocationForm(
             onClick = onCancel,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Отмена")
+            Text(Strings.cancel())
         }
     }
 }

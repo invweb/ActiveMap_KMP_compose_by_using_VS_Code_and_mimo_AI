@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.activemap.shared.model.*
 import com.activemap.shared.model.LocationFilter
+import com.activemap.shared.resources.Strings
 
 @Composable
 fun LocationListDesktop(
@@ -31,8 +32,8 @@ fun LocationListDesktop(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            placeholder = { Text("Поиск по названию...") },
-            leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Поиск") },
+            placeholder = { Text(Strings.searchPlaceholder()) },
+            leadingIcon = { Icon(Icons.Default.Search, contentDescription = Strings.search()) },
             singleLine = true
         )
         
@@ -48,7 +49,7 @@ fun LocationListDesktop(
                 onClick = { 
                     onFilterChange(filter.copy(activityType = null))
                 },
-                label = { Text("Все типы") }
+                label = { Text(Strings.allTypes()) }
             )
             ActivityType.values().forEach { type ->
                 FilterChip(
@@ -75,7 +76,7 @@ fun LocationListDesktop(
                 onClick = { 
                     onFilterChange(filter.copy(status = null))
                 },
-                label = { Text("Все статусы") }
+                label = { Text(Strings.allStatuses()) }
             )
             VisitStatus.values().forEach { status ->
                 FilterChip(
@@ -128,15 +129,15 @@ fun LocationListItemDesktop(
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = "Тип: ${location.activityType.name}",
+                text = "${Strings.type()}: ${location.activityType.name}",
                 style = MaterialTheme.typography.bodyMedium
             )
             Text(
-                text = "Статус: ${location.status.name}",
+                text = "${Strings.status()}: ${location.status.name}",
                 style = MaterialTheme.typography.bodyMedium
             )
             Text(
-                text = "Рейтинг: ${location.rating}/5",
+                text = "${Strings.rating()}: ${location.rating}/5",
                 style = MaterialTheme.typography.bodySmall
             )
         }
