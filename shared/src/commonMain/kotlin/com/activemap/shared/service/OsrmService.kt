@@ -36,7 +36,7 @@ class OsrmService {
         }.body()
 
         if (response.code != "Ok" || response.routes.isEmpty()) {
-            throw Exception("Маршрут не найден: ${response.code}")
+            throw Exception("Route not found: ${response.code}")
         }
 
         val route = response.routes.first()

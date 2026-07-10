@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.activemap.shared.model.ActivityType
 import com.activemap.shared.model.Location
 import com.activemap.shared.model.Route
+import com.activemap.shared.resources.Strings
 
 @Composable
 fun MapViewDesktop(
@@ -31,6 +32,17 @@ fun MapViewDesktop(
     currentRoute: Route? = null,
     modifier: Modifier = Modifier
 ) {
+    val noLocationsText = Strings.noLocations()
+    val centerOnMeText = Strings.centerOnMe()
+    val legendText = Strings.legend()
+    val sportText = Strings.activitySport()
+    val workText = Strings.activityWork()
+    val restText = Strings.activityRest()
+    val educationText = Strings.activityEducation()
+    val entertainmentText = Strings.activityEntertainment()
+    val routeStartText = Strings.routeStartMarker()
+    val routeEndText = Strings.routeEndMarker()
+    val routeText = Strings.routeLine()
     Box(modifier = modifier.fillMaxSize()) {
         Canvas(
             modifier = Modifier
@@ -146,7 +158,7 @@ fun MapViewDesktop(
                         textAlign = android.graphics.Paint.Align.CENTER
                     }
                     drawText(
-                        "Нет локаций",
+                        noLocationsText,
                         size.width / 2,
                         size.height / 2,
                         paint
@@ -164,7 +176,7 @@ fun MapViewDesktop(
                 .padding(16.dp),
             containerColor = MaterialTheme.colorScheme.primaryContainer
         ) {
-            Icon(Icons.Default.LocationOn, contentDescription = "Центр на мне")
+            Icon(Icons.Default.LocationOn, contentDescription = centerOnMeText)
         }
         
         Card(
@@ -176,19 +188,19 @@ fun MapViewDesktop(
                 modifier = Modifier.padding(8.dp)
             ) {
                 Text(
-                    text = "Легенда:",
+                    text = legendText,
                     style = MaterialTheme.typography.titleSmall
                 )
-                LegendItem("Спорт", Color.Red)
-                LegendItem("Работа", Color.Blue)
-                LegendItem("Отдых", Color.Green)
-                LegendItem("Образование", Color.Yellow)
-                LegendItem("Развлечения", Color.Magenta)
+                LegendItem(sportText, Color.Red)
+                LegendItem(workText, Color.Blue)
+                LegendItem(restText, Color.Green)
+                LegendItem(educationText, Color.Yellow)
+                LegendItem(entertainmentText, Color.Magenta)
                 if (isRouteMode) {
                     Spacer(modifier = Modifier.height(8.dp))
-                    LegendItem("Начало маршрута", Color.Green)
-                    LegendItem("Конец маршрута", Color.Red)
-                    LegendItem("Маршрут", Color.Blue)
+                    LegendItem(routeStartText, Color.Green)
+                    LegendItem(routeEndText, Color.Red)
+                    LegendItem(routeText, Color.Blue)
                 }
             }
         }

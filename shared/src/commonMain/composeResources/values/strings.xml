@@ -56,4 +56,15 @@
     <string name="version">Версия</string>
     <string name="route_error">Ошибка построения маршрута</string>
     <string name="center_on_me">Центр на мне</string>
+    <string name="no_locations">Нет локаций</string>
+    <string name="legend">Легенда:</string>
+    <string name="activity_sport">Спорт</string>
+    <string name="activity_work">Работа</string>
+    <string name="activity_rest">Отдых</string>
+    <string name="activity_education">Образование</string>
+    <string name="activity_entertainment">Развлечения</string>
+    <string name="route_start_marker">Начало маршрута</string>
+    <string name="route_end_marker">Конец маршрута</string>
+    <string name="name_is_required_error">Название обязательно</string>
+    <string name="route_not_found">Маршрут не найден</string>
 </resources>

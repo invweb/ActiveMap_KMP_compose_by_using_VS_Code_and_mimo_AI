@@ -174,4 +174,42 @@ object Strings {
 
     @Composable
     fun centerOnMe(): String = Res.string.center_on_me.getString()
+
+    @Composable
+    fun routeInfo(distanceKm: Double, durationText: String): String {
+        return Res.string.route_info.getString(distanceKm, durationText)
+    }
+
+    @Composable
+    fun noLocations(): String = Res.string.no_locations.getString()
+
+    @Composable
+    fun legend(): String = Res.string.legend.getString()
+
+    @Composable
+    fun activitySport(): String = Res.string.activity_sport.getString()
+
+    @Composable
+    fun activityWork(): String = Res.string.activity_work.getString()
+
+    @Composable
+    fun activityRest(): String = Res.string.activity_rest.getString()
+
+    @Composable
+    fun activityEducation(): String = Res.string.activity_education.getString()
+
+    @Composable
+    fun activityEntertainment(): String = Res.string.activity_entertainment.getString()
+
+    @Composable
+    fun routeStartMarker(): String = Res.string.route_start_marker.getString()
+
+    @Composable
+    fun routeEndMarker(): String = Res.string.route_end_marker.getString()
+
+    @Composable
+    fun nameIsRequiredError(): String = Res.string.name_is_required_error.getString()
+
+    @Composable
+    fun routeNotFound(): String = Res.string.route_not_found.getString()
 }

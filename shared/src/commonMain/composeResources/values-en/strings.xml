@@ -56,4 +56,15 @@
     <string name="version">Version</string>
     <string name="route_error">Route calculation error</string>
     <string name="center_on_me">Center on me</string>
+    <string name="no_locations">No locations</string>
+    <string name="legend">Legend:</string>
+    <string name="activity_sport">Sport</string>
+    <string name="activity_work">Work</string>
+    <string name="activity_rest">Rest</string>
+    <string name="activity_education">Education</string>
+    <string name="activity_entertainment">Entertainment</string>
+    <string name="route_start_marker">Route start</string>
+    <string name="route_end_marker">Route end</string>
+    <string name="name_is_required_error">Name is required</string>
+    <string name="route_not_found">Route not found</string>
 </resources>

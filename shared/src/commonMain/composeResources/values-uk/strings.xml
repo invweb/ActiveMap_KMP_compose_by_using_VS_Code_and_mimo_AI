@@ -56,4 +56,15 @@
     <string name="version">Версія</string>
     <string name="route_error">Помилка побудови маршруту</string>
     <string name="center_on_me">Центр на мені</string>
+    <string name="no_locations">Немає локацій</string>
+    <string name="legend">Легенда:</string>
+    <string name="activity_sport">Спорт</string>
+    <string name="activity_work">Робота</string>
+    <string name="activity_rest">Відпочинок</string>
+    <string name="activity_education">Освіта</string>
+    <string name="activity_entertainment">Розваги</string>
+    <string name="route_start_marker">Початок маршруту</string>
+    <string name="route_end_marker">Кінець маршруту</string>
+    <string name="name_is_required_error">Назва обов\'язкова</string>
+    <string name="route_not_found">Маршрут не знайдено</string>
 </resources>

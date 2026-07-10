@@ -6,6 +6,7 @@ import org.jetbrains.compose.web.dom.*
 import com.activemap.shared.model.ActivityType
 import com.activemap.shared.model.Location
 import com.activemap.shared.model.Route
+import com.activemap.shared.resources.Strings
 
 @Composable
 fun MapViewWeb(
@@ -17,6 +18,18 @@ fun MapViewWeb(
     routeEnd: Pair<Double, Double>? = null,
     currentRoute: Route? = null
 ) {
+    val noLocationsText = Strings.noLocations()
+    val legendText = Strings.legend()
+    val sportText = Strings.activitySport()
+    val workText = Strings.activityWork()
+    val restText = Strings.activityRest()
+    val educationText = Strings.activityEducation()
+    val entertainmentText = Strings.activityEntertainment()
+    val routeStartText = Strings.routeStart()
+    val routeEndText = Strings.routeEnd()
+    val routeText = Strings.routeLine()
+    val routeStartMarkerText = Strings.routeStartMarker()
+    val routeEndMarkerText = Strings.routeEndMarker()
     Div(
         attrs = {
             style {
@@ -64,7 +77,7 @@ fun MapViewWeb(
                         }
                     }
                 ) {
-                    Text("Нет локаций")
+                    Text(noLocationsText)
                 }
             } else {
                 val minLat = allPoints.minOf { it.first }
@@ -129,7 +142,7 @@ fun MapViewWeb(
                                 transform("translate(-50%, -50%)")
                                 zIndex(11)
                             }
-                            title("Начало маршрута")
+                            title(routeStartMarkerText)
                         }
                     )
                 }
@@ -152,7 +165,7 @@ fun MapViewWeb(
                                 transform("translate(-50%, -50%)")
                                 zIndex(11)
                             }
-                            title("Конец маршрута")
+                            title(routeEndMarkerText)
                         }
                     )
                 }
@@ -242,20 +255,20 @@ fun MapViewWeb(
                             }
                         }
                     ) {
-                        Text("Легенда:")
+                        Text(legendText)
                     }
                     
-                    LegendItemWeb("Спорт", "#f44336")
-                    LegendItemWeb("Работа", "#2196f3")
-                    LegendItemWeb("Отдых", "#4caf50")
-                    LegendItemWeb("Образование", "#ffeb3b")
-                    LegendItemWeb("Развлечения", "#9c27b0")
+                    LegendItemWeb(sportText, "#f44336")
+                    LegendItemWeb(workText, "#2196f3")
+                    LegendItemWeb(restText, "#4caf50")
+                    LegendItemWeb(educationText, "#ffeb3b")
+                    LegendItemWeb(entertainmentText, "#9c27b0")
                     
                     if (isRouteMode) {
                         Spacer(attrs = { style { height(8.px) } })
-                        LegendItemWeb("Начало", "#4caf50")
-                        LegendItemWeb("Конец", "#f44336")
-                        LegendItemWeb("Маршрут", "#2196f3")
+                        LegendItemWeb(routeStartText, "#4caf50")
+                        LegendItemWeb(routeEndText, "#f44336")
+                        LegendItemWeb(routeText, "#2196f3")
                     }
                 }
             }
