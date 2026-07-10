@@ -24,52 +24,52 @@ data class Location(
 
 @Serializable
 enum class ActivityType {
-    SPORT,        // Спорт
-    WORK,         // Работа
-    REST,         // Отдых
-    EDUCATION,    // Образование
-    ENTERTAINMENT // Развлечения
+    SPORT,        // Sports
+    WORK,         // Work
+    REST,         // Leisure
+    EDUCATION,    // Education
+    ENTERTAINMENT // Entertainment
 }
 
 @Serializable
 enum class CoverageLevel {
-    NONE,      // Без покрытия
-    PARTIAL,   // Частичное
-    MEDIUM,    // Среднее
-    FULL       // Полное
+    NONE,      // No coverage
+    PARTIAL,   // Partial
+    MEDIUM,    // Medium
+    FULL       // Full
 }
 
 @Serializable
 enum class LightingLevel {
-    NONE,      // Без освещения
-    LOW,       // Слабое
-    MEDIUM,    // Среднее
-    BRIGHT     // Яркое
+    NONE,      // No lighting
+    LOW,       // Dim
+    MEDIUM,    // Medium
+    BRIGHT     // Bright
 }
 
 @Serializable
 enum class CleanlinessLevel {
-    DIRTY,     // Грязно
-    POOR,      // Плохо
-    MEDIUM,    // Средне
-    CLEAN,     // Чисто
-    PERFECT    // Идеально
+    DIRTY,     // Dirty
+    POOR,      // Poor
+    MEDIUM,    // Medium
+    CLEAN,     // Clean
+    PERFECT    // Perfect
 }
 
 @Serializable
 enum class NoiseLevel {
-    QUIET,     // Тихо
-    LOW,       // Немного шума
-    MEDIUM,    // Средний шум
-    LOUD,      // Шумно
-    VERY_LOUD  // Очень шумно
+    QUIET,     // Quiet
+    LOW,       // Some noise
+    MEDIUM,    // Medium noise
+    LOUD,      // Loud
+    VERY_LOUD  // Very loud
 }
 
 @Serializable
 enum class VisitStatus {
-    WAS_THERE,        // Был
-    WANT_TO_VISIT,    // Хочу сходить
-    NOT_SUITABLE      // Не подходит
+    WAS_THERE,        // Visited
+    WANT_TO_VISIT,    // Want to visit
+    NOT_SUITABLE      // Not suitable
 }
 
 @Serializable
