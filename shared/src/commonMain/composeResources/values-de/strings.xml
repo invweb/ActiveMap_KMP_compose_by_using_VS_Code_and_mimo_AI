@@ -67,4 +67,5 @@
     <string name="route_end_marker">Routenende</string>
     <string name="name_is_required_error">Name ist erforderlich</string>
     <string name="route_not_found">Route nicht gefunden</string>
+    <string name="activity_type">Aktivitätstyp</string>
 </resources>

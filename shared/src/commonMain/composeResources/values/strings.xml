@@ -67,4 +67,5 @@
     <string name="route_end_marker">Конец маршрута</string>
     <string name="name_is_required_error">Название обязательно</string>
     <string name="route_not_found">Маршрут не найден</string>
+    <string name="activity_type">Тип деятельности</string>
 </resources>

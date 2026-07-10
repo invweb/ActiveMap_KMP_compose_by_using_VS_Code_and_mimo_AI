@@ -5,7 +5,6 @@ import android.graphics.Color
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Route
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -40,6 +39,12 @@ fun MapView(
 ) {
     val context = LocalContext.current
     var pickedPoint by remember { mutableStateOf<GeoPoint?>(null) }
+
+    val selectPointText = Strings.selectPoint()
+    val routeStartText = Strings.routeStart()
+    val routeEndText = Strings.routeEnd()
+    val centerOnMeText = Strings.centerOnMe()
+    val selectRoutePointsText = Strings.selectRoutePoints()
 
     LaunchedEffect(Unit) {
         Configuration.getInstance().load(context, context.getSharedPreferences("osm", Context.MODE_PRIVATE))
@@ -81,7 +86,7 @@ fun MapView(
                     val pickMarker = Marker(mapView).apply {
                         position = point
                         setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-                        title = Strings.selectPoint()
+                        title = selectPointText
                         snippet = "%.6f, %.6f".format(point.latitude, point.longitude)
                     }
                     mapView.overlays.add(pickMarker)
@@ -93,7 +98,7 @@ fun MapView(
                         val startMarker = Marker(mapView).apply {
                             position = GeoPoint(start.first, start.second)
                             setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-                            title = Strings.routeStart()
+                            title = routeStartText
                             snippet = "%.6f, %.6f".format(start.first, start.second)
                         }
                         mapView.overlays.add(startMarker)
@@ -103,7 +108,7 @@ fun MapView(
                         val endMarker = Marker(mapView).apply {
                             position = GeoPoint(end.first, end.second)
                             setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-                            title = Strings.routeEnd()
+                            title = routeEndText
                             snippet = "%.6f, %.6f".format(end.first, end.second)
                         }
                         mapView.overlays.add(endMarker)
@@ -149,7 +154,7 @@ fun MapView(
                 .padding(16.dp),
             containerColor = MaterialTheme.colorScheme.primaryContainer
         ) {
-            Icon(Icons.Default.LocationOn, contentDescription = Strings.centerOnMe())
+            Icon(Icons.Default.LocationOn, contentDescription = centerOnMeText)
         }
 
         Card(
@@ -158,7 +163,7 @@ fun MapView(
                 .padding(16.dp)
         ) {
             Text(
-                text = if (isRouteMode) Strings.selectRoutePoints() else Strings.selectPoint(),
+                text = if (isRouteMode) selectRoutePointsText else selectPointText,
                 modifier = Modifier.padding(12.dp),
                 style = MaterialTheme.typography.bodySmall
             )

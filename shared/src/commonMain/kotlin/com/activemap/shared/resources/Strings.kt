@@ -1,215 +1,216 @@
 package com.activemap.shared.resources
 
-import activemap.shared.generated.resources.Res
-import activemap.shared.generated.resources.*
+import com.activemap.shared.generated.resources.Res
+import com.activemap.shared.generated.resources.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.text.intl.Locale
-import androidx.compose.ui.text.intl.currentLocale
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
 
+@OptIn(ExperimentalResourceApi::class)
 object Strings {
     @Composable
-    private fun currentLanguage(): String = currentLocale().language
+    fun appName(): String = stringResource(Res.string.app_name)
 
     @Composable
-    fun appName(): String = Res.string.app_name.getString()
+    fun map(): String = stringResource(Res.string.map)
 
     @Composable
-    fun map(): String = Res.string.map.getString()
+    fun list(): String = stringResource(Res.string.list)
 
     @Composable
-    fun list(): String = Res.string.list.getString()
+    fun addLocation(): String = stringResource(Res.string.add_location)
 
     @Composable
-    fun addLocation(): String = Res.string.add_location.getString()
+    fun add(): String = stringResource(Res.string.add)
 
     @Composable
-    fun add(): String = Res.string.add.getString()
+    fun close(): String = stringResource(Res.string.close)
 
     @Composable
-    fun close(): String = Res.string.close.getString()
+    fun back(): String = stringResource(Res.string.back)
 
     @Composable
-    fun back(): String = Res.string.back.getString()
+    fun edit(): String = stringResource(Res.string.edit)
 
     @Composable
-    fun edit(): String = Res.string.edit.getString()
+    fun delete(): String = stringResource(Res.string.delete)
 
     @Composable
-    fun delete(): String = Res.string.delete.getString()
+    fun save(): String = stringResource(Res.string.save)
 
     @Composable
-    fun save(): String = Res.string.save.getString()
+    fun saveChanges(): String = stringResource(Res.string.save_changes)
 
     @Composable
-    fun saveChanges(): String = Res.string.save_changes.getString()
+    fun cancel(): String = stringResource(Res.string.cancel)
 
     @Composable
-    fun cancel(): String = Res.string.cancel.getString()
+    fun search(): String = stringResource(Res.string.search)
 
     @Composable
-    fun search(): String = Res.string.search.getString()
+    fun searchPlaceholder(): String = stringResource(Res.string.search_placeholder)
 
     @Composable
-    fun searchPlaceholder(): String = Res.string.search_placeholder.getString()
+    fun allTypes(): String = stringResource(Res.string.all_types)
 
     @Composable
-    fun allTypes(): String = Res.string.all_types.getString()
+    fun allStatuses(): String = stringResource(Res.string.all_statuses)
 
     @Composable
-    fun allStatuses(): String = Res.string.all_statuses.getString()
+    fun type(): String = stringResource(Res.string.type)
 
     @Composable
-    fun type(): String = Res.string.type.getString()
+    fun status(): String = stringResource(Res.string.status)
 
     @Composable
-    fun status(): String = Res.string.status.getString()
+    fun rating(): String = stringResource(Res.string.rating)
 
     @Composable
-    fun rating(): String = Res.string.rating.getString()
+    fun coordinates(): String = stringResource(Res.string.coordinates)
 
     @Composable
-    fun coordinates(): String = Res.string.coordinates.getString()
+    fun latitude(): String = stringResource(Res.string.latitude)
 
     @Composable
-    fun latitude(): String = Res.string.latitude.getString()
+    fun longitude(): String = stringResource(Res.string.longitude)
 
     @Composable
-    fun longitude(): String = Res.string.longitude.getString()
+    fun coverage(): String = stringResource(Res.string.coverage)
 
     @Composable
-    fun coverage(): String = Res.string.coverage.getString()
+    fun lighting(): String = stringResource(Res.string.lighting)
 
     @Composable
-    fun lighting(): String = Res.string.lighting.getString()
+    fun inventory(): String = stringResource(Res.string.inventory)
 
     @Composable
-    fun inventory(): String = Res.string.inventory.getString()
+    fun cleanliness(): String = stringResource(Res.string.cleanliness)
 
     @Composable
-    fun cleanliness(): String = Res.string.cleanliness.getString()
+    fun noiseLevel(): String = stringResource(Res.string.noise_level)
 
     @Composable
-    fun noiseLevel(): String = Res.string.noise_level.getString()
+    fun notes(): String = stringResource(Res.string.notes)
 
     @Composable
-    fun notes(): String = Res.string.notes.getString()
+    fun photos(): String = stringResource(Res.string.photos)
 
     @Composable
-    fun photos(): String = Res.string.photos.getString()
+    fun photosCommaSeparated(): String = stringResource(Res.string.photos_comma_separated)
 
     @Composable
-    fun photosCommaSeparated(): String = Res.string.photos_comma_separated.getString()
+    fun ratings(): String = stringResource(Res.string.ratings)
 
     @Composable
-    fun ratings(): String = Res.string.ratings.getString()
+    fun nameRequired(): String = stringResource(Res.string.name_required)
 
     @Composable
-    fun nameRequired(): String = Res.string.name_required.getString()
+    fun nameIsRequired(): String = stringResource(Res.string.name_is_required)
 
     @Composable
-    fun nameIsRequired(): String = Res.string.name_is_required.getString()
+    fun coordinatesRequired(): String = stringResource(Res.string.coordinates_required)
 
     @Composable
-    fun coordinatesRequired(): String = Res.string.coordinates_required.getString()
+    fun notSpecified(): String = stringResource(Res.string.not_specified)
 
     @Composable
-    fun notSpecified(): String = Res.string.not_specified.getString()
+    fun noNotes(): String = stringResource(Res.string.no_notes)
 
     @Composable
-    fun noNotes(): String = Res.string.no_notes.getString()
+    fun noPhotos(): String = stringResource(Res.string.no_photos)
 
     @Composable
-    fun noPhotos(): String = Res.string.no_photos.getString()
+    fun routeMode(): String = stringResource(Res.string.route_mode)
 
     @Composable
-    fun routeMode(): String = Res.string.route_mode.getString()
+    fun routeStart(): String = stringResource(Res.string.route_start)
 
     @Composable
-    fun routeStart(): String = Res.string.route_start.getString()
+    fun routeEnd(): String = stringResource(Res.string.route_end)
 
     @Composable
-    fun routeEnd(): String = Res.string.route_end.getString()
+    fun routeLine(): String = stringResource(Res.string.route_line)
 
     @Composable
-    fun routeLine(): String = Res.string.route_line.getString()
+    fun routeCalculating(): String = stringResource(Res.string.route_calculating)
 
     @Composable
-    fun routeCalculating(): String = Res.string.route_calculating.getString()
+    fun clearRoute(): String = stringResource(Res.string.clear_route)
 
     @Composable
-    fun clearRoute(): String = Res.string.clear_route.getString()
+    fun selectRoutePoints(): String = stringResource(Res.string.select_route_points)
 
     @Composable
-    fun selectRoutePoints(): String = Res.string.select_route_points.getString()
+    fun selectPoint(): String = stringResource(Res.string.select_point)
 
     @Composable
-    fun selectPoint(): String = Res.string.select_point.getString()
+    fun language(): String = stringResource(Res.string.language)
 
     @Composable
-    fun language(): String = Res.string.language.getString()
+    fun russian(): String = stringResource(Res.string.russian)
 
     @Composable
-    fun russian(): String = Res.string.russian.getString()
+    fun english(): String = stringResource(Res.string.english)
 
     @Composable
-    fun english(): String = Res.string.english.getString()
+    fun german(): String = stringResource(Res.string.german)
 
     @Composable
-    fun german(): String = Res.string.german.getString()
+    fun ukrainian(): String = stringResource(Res.string.ukrainian)
 
     @Composable
-    fun ukrainian(): String = Res.string.ukrainian.getString()
+    fun settings(): String = stringResource(Res.string.settings)
 
     @Composable
-    fun settings(): String = Res.string.settings.getString()
+    fun about(): String = stringResource(Res.string.about)
 
     @Composable
-    fun about(): String = Res.string.about.getString()
+    fun version(): String = stringResource(Res.string.version)
 
     @Composable
-    fun version(): String = Res.string.version.getString()
+    fun routeError(): String = stringResource(Res.string.route_error)
 
     @Composable
-    fun routeError(): String = Res.string.route_error.getString()
-
-    @Composable
-    fun centerOnMe(): String = Res.string.center_on_me.getString()
+    fun centerOnMe(): String = stringResource(Res.string.center_on_me)
 
     @Composable
     fun routeInfo(distanceKm: Double, durationText: String): String {
-        return Res.string.route_info.getString(distanceKm, durationText)
+        return stringResource(Res.string.route_info, distanceKm, durationText)
     }
 
     @Composable
-    fun noLocations(): String = Res.string.no_locations.getString()
+    fun noLocations(): String = stringResource(Res.string.no_locations)
 
     @Composable
-    fun legend(): String = Res.string.legend.getString()
+    fun legend(): String = stringResource(Res.string.legend)
 
     @Composable
-    fun activitySport(): String = Res.string.activity_sport.getString()
+    fun activitySport(): String = stringResource(Res.string.activity_sport)
 
     @Composable
-    fun activityWork(): String = Res.string.activity_work.getString()
+    fun activityWork(): String = stringResource(Res.string.activity_work)
 
     @Composable
-    fun activityRest(): String = Res.string.activity_rest.getString()
+    fun activityRest(): String = stringResource(Res.string.activity_rest)
 
     @Composable
-    fun activityEducation(): String = Res.string.activity_education.getString()
+    fun activityEducation(): String = stringResource(Res.string.activity_education)
 
     @Composable
-    fun activityEntertainment(): String = Res.string.activity_entertainment.getString()
+    fun activityEntertainment(): String = stringResource(Res.string.activity_entertainment)
 
     @Composable
-    fun routeStartMarker(): String = Res.string.route_start_marker.getString()
+    fun routeStartMarker(): String = stringResource(Res.string.route_start_marker)
 
     @Composable
-    fun routeEndMarker(): String = Res.string.route_end_marker.getString()
+    fun routeEndMarker(): String = stringResource(Res.string.route_end_marker)
 
     @Composable
-    fun nameIsRequiredError(): String = Res.string.name_is_required_error.getString()
+    fun nameIsRequiredError(): String = stringResource(Res.string.name_is_required_error)
 
     @Composable
-    fun routeNotFound(): String = Res.string.route_not_found.getString()
+    fun routeNotFound(): String = stringResource(Res.string.route_not_found)
+
+    @Composable
+    fun activityType(): String = stringResource(Res.string.activity_type)
 }
