@@ -18,9 +18,11 @@ data class Route(
         get() {
             val hours = durationSeconds / 3600.0
             return if (hours >= 1.0) {
-                "%.1f ч".format(hours)
+                val h = (hours * 10).toLong() / 10.0
+                "$h ч"
             } else {
-                "%.0f мин".format(durationMinutes)
+                val m = durationMinutes.toLong()
+                "$m мин"
             }
         }
 }

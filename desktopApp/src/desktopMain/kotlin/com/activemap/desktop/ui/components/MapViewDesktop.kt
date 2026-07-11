@@ -151,26 +151,25 @@ fun MapViewDesktop(
                     )
                 }
             } else {
-                drawContext.canvas.nativeCanvas.apply {
-                    val paint = android.graphics.Paint().apply {
-                        color = android.graphics.Color.GRAY
-                        textSize = 48f
-                        textAlign = android.graphics.Paint.Align.CENTER
-                    }
-                    drawText(
-                        noLocationsText,
-                        size.width / 2,
-                        size.height / 2,
-                        paint
-                    )
-                }
+                drawCircle(
+                    color = Color.LightGray,
+                    radius = 30f,
+                    center = Offset(size.width / 2, size.height / 2)
+                )
             }
         }
         
+        if (locations.isEmpty()) {
+            Text(
+                text = noLocationsText,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.align(Alignment.Center)
+            )
+        }
+        
         FloatingActionButton(
-            onClick = {
-                // TODO: Get actual location
-            },
+            onClick = { },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(16.dp),

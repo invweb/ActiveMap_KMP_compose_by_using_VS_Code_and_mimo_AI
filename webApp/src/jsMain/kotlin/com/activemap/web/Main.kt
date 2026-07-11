@@ -4,14 +4,26 @@ import androidx.compose.runtime.*
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import org.jetbrains.compose.web.renderComposable
-import com.activemap.shared.repository.InMemoryLocationRepository
 import com.activemap.shared.viewmodel.LocationViewModel
 import com.activemap.web.ui.ActiveMapWebApp
+import com.activemap.shared.di.appModule
+import com.activemap.web.di.webModule
+import org.koin.compose.koinInject
+import org.koin.core.context.startKoin
 
 fun main() {
+    startKoin {
+        modules(appModule, webModule)
+    }
+    
     renderComposable(rootElementId = "root") {
-        val repository = remember { InMemoryLocationRepository() }
-        val viewModel = remember { LocationViewModel(repository) }
+        val viewModel: LocationViewModel = koinInject()
+        
+        DisposableEffect(Unit) {
+            onDispose {
+                viewModel.close()
+            }
+        }
         
         Style {
             body {

@@ -1,5 +1,6 @@
 package com.activemap.shared.model
 
+import kotlinx.datetime.Clock
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -18,8 +19,8 @@ data class Location(
     val status: VisitStatus = VisitStatus.WANT_TO_VISIT,
     val notes: String = "",
     val photos: List<String> = emptyList(),
-    val createdAt: Long = System.currentTimeMillis(),
-    val updatedAt: Long = System.currentTimeMillis()
+    val createdAt: Long = Clock.System.now().toEpochMilliseconds(),
+    val updatedAt: Long = Clock.System.now().toEpochMilliseconds()
 )
 
 @Serializable

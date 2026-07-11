@@ -21,6 +21,7 @@ kotlin {
     
     js(IR) {
         browser()
+        nodejs()
         binaries.executable()
     }
     
@@ -37,6 +38,15 @@ kotlin {
                 implementation("io.ktor:ktor-client-core:2.3.7")
                 implementation("io.ktor:ktor-client-content-negotiation:2.3.7")
                 implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.7")
+                implementation("io.insert-koin:koin-core:3.5.6")
+                implementation("io.insert-koin:koin-compose:1.1.5")
+            }
+        }
+        
+        val commonTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
             }
         }
         

@@ -8,11 +8,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
-import com.activemap.shared.repository.InMemoryLocationRepository
 import com.activemap.shared.viewmodel.LocationViewModel
 import com.activemap.desktop.ui.ActiveMapDesktopApp
+import com.activemap.shared.di.appModule
+import com.activemap.desktop.di.desktopModule
+import org.koin.compose.koinInject
+import org.koin.core.context.startKoin
 
 fun main() = application {
+    startKoin {
+        modules(appModule, desktopModule)
+    }
+    
     val windowState = rememberWindowState(width = 1200.dp, height = 800.dp)
     
     Window(
@@ -20,8 +27,13 @@ fun main() = application {
         state = windowState,
         title = "Active Map"
     ) {
-        val repository = remember { InMemoryLocationRepository() }
-        val viewModel = remember { LocationViewModel(repository) }
+        val viewModel: LocationViewModel = koinInject()
+        
+        DisposableEffect(Unit) {
+            onDispose {
+                viewModel.close()
+            }
+        }
         
         MaterialTheme {
             ActiveMapDesktopApp(viewModel = viewModel)

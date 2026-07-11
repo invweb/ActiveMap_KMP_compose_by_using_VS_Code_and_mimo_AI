@@ -19,6 +19,8 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.8.1")
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
                 implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
+                implementation("io.insert-koin:koin-core:3.5.6")
+                implementation("io.insert-koin:koin-compose:1.1.5")
             }
         }
     }

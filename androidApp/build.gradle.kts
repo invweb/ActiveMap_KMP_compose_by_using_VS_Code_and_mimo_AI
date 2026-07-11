@@ -6,6 +6,7 @@ plugins {
     id("org.jetbrains.compose")
     id("org.jetbrains.kotlin.plugin.compose")
     id("kotlin-parcelize")
+    id("com.google.devtools.ksp")
 }
 
 kotlin {
@@ -31,12 +32,17 @@ kotlin {
                 implementation("org.osmdroid:osmdroid-android:6.1.18")
                 implementation("androidx.room:room-runtime:2.6.1")
                 implementation("androidx.room:room-ktx:2.6.1")
-                implementation("androidx.room:room-compiler:2.6.1")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
+                implementation("io.insert-koin:koin-android:3.5.6")
+                implementation("io.insert-koin:koin-androidx-compose:3.5.6")
             }
         }
     }
+}
+
+dependencies {
+    add("kspAndroid", "androidx.room:room-compiler:2.6.1")
 }
 
 android {
@@ -53,7 +59,8 @@ android {
     
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
