@@ -31,11 +31,5 @@ result/
 .DS_Store
 Thumbs.db
 
-# Kotlin
-*.class
-*.jar
-*.war
-*.ear
-
 # Logs
 *.log
