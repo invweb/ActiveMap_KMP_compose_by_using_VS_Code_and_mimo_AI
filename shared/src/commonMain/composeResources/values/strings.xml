@@ -68,4 +68,9 @@
     <string name="name_is_required_error">Название обязательно</string>
     <string name="route_not_found">Маршрут не найден</string>
     <string name="activity_type">Тип деятельности</string>
+    <string name="export">Экспорт</string>
+    <string name="import_data">Импорт</string>
+    <string name="imported_count">Импортировано локаций: %1$d</string>
+    <string name="export_error">Ошибка экспорта</string>
+    <string name="import_error">Ошибка импорта</string>
 </resources>

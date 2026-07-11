@@ -3,8 +3,7 @@ package com.activemap.shared.ui
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
@@ -19,6 +18,7 @@ import com.activemap.shared.viewmodel.LocationViewModel
 import com.activemap.shared.resources.Strings
 import com.activemap.shared.resources.LocaleManager
 import com.activemap.shared.resources.AppLanguage
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,7 +34,9 @@ fun SharedActiveMapApp(
         currentRoute: Route?,
         modifier: Modifier
     ) -> Unit,
-    onCenterOnMe: () -> Unit = {}
+    onCenterOnMe: () -> Unit = {},
+    onExportData: (suspend (String) -> Unit)? = null,
+    onImportData: (suspend () -> String?)? = null
 ) {
     val locations by viewModel.locations.collectAsState()
     val selectedLocation by viewModel.selectedLocation.collectAsState()
@@ -53,8 +55,10 @@ fun SharedActiveMapApp(
 
     var currentScreen by remember { mutableStateOf(Screen.MAP) }
     var showLanguageDialog by remember { mutableStateOf(false) }
+    var showMenu by remember { mutableStateOf(false) }
     
     val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
     
     LaunchedEffect(error) {
         error?.let {
@@ -115,6 +119,56 @@ fun SharedActiveMapApp(
                             titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
                         ),
                         actions = {
+                            if (onExportData != null || onImportData != null) {
+                                Box {
+                                    IconButton(onClick = { showMenu = true }) {
+                                        Icon(
+                                            Icons.Default.Settings,
+                                            contentDescription = Strings.settings()
+                                        )
+                                    }
+                                    DropdownMenu(
+                                        expanded = showMenu,
+                                        onDismissRequest = { showMenu = false }
+                                    ) {
+                                        if (onExportData != null) {
+                                            DropdownMenuItem(
+                                                text = { Text(Strings.export()) },
+                                                onClick = {
+                                                    showMenu = false
+                                                    scope.launch {
+                                                        try {
+                                                            val data = viewModel.exportData()
+                                                            if (data.isNotEmpty()) {
+                                                                onExportData(data)
+                                                            }
+                                                        } catch (_: Exception) {
+                                                        }
+                                                    }
+                                                }
+                                            )
+                                        }
+                                        if (onImportData != null) {
+                                            DropdownMenuItem(
+                                                text = { Text(Strings.importData()) },
+                                                onClick = {
+                                                    showMenu = false
+                                                    scope.launch {
+                                                        try {
+                                                            val json = onImportData()
+                                                            if (json != null) {
+                                                                val count = viewModel.importData(json)
+                                                                snackbarHostState.showSnackbar("Imported: $count")
+                                                            }
+                                                        } catch (_: Exception) {
+                                                        }
+                                                    }
+                                                }
+                                            )
+                                        }
+                                    }
+                                }
+                            }
                             IconButton(onClick = { viewModel.toggleRouteMode() }) {
                                 Icon(
                                     Icons.Default.LocationOn,
@@ -166,7 +220,7 @@ fun SharedActiveMapApp(
                             onClick = { currentScreen = Screen.MAP }
                         )
                         NavigationBarItem(
-                            icon = { Icon(Icons.Default.List, contentDescription = Strings.list()) },
+                            icon = { Icon(Icons.AutoMirrored.Filled.List, contentDescription = Strings.list()) },
                             label = { Text(Strings.list()) },
                             selected = currentScreen == Screen.LIST,
                             onClick = { currentScreen = Screen.LIST }

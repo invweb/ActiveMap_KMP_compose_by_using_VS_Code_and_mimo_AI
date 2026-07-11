@@ -68,4 +68,9 @@
     <string name="name_is_required_error">Name ist erforderlich</string>
     <string name="route_not_found">Route nicht gefunden</string>
     <string name="activity_type">Aktivitätstyp</string>
+    <string name="export">Exportieren</string>
+    <string name="import_data">Importieren</string>
+    <string name="imported_count">Standorte importiert: %1$d</string>
+    <string name="export_error">Exportfehler</string>
+    <string name="import_error">Importfehler</string>
 </resources>

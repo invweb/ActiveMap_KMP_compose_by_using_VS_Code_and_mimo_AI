@@ -68,4 +68,9 @@
     <string name="name_is_required_error">Назва обов\'язкова</string>
     <string name="route_not_found">Маршрут не знайдено</string>
     <string name="activity_type">Тип діяльності</string>
+    <string name="export">Експорт</string>
+    <string name="import_data">Імпорт</string>
+    <string name="imported_count">Імпортовано локацій: %1$d</string>
+    <string name="export_error">Помилка експорту</string>
+    <string name="import_error">Помилка імпорту</string>
 </resources>

@@ -7,6 +7,10 @@ import androidx.compose.ui.Modifier
 import com.activemap.shared.viewmodel.LocationViewModel
 import com.activemap.shared.ui.SharedActiveMapApp
 import com.activemap.desktop.ui.components.MapViewDesktop
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import javax.swing.JFileChooser
+import javax.swing.filechooser.FileNameExtensionFilter
 
 @Composable
 fun ActiveMapDesktopApp(viewModel: LocationViewModel) {
@@ -24,6 +28,33 @@ fun ActiveMapDesktopApp(viewModel: LocationViewModel) {
                 modifier = modifier
             )
         },
-        onCenterOnMe = { viewModel.centerOnMe() }
+        onCenterOnMe = { viewModel.centerOnMe() },
+        onExportData = { json ->
+            withContext(Dispatchers.IO) {
+                val chooser = JFileChooser().apply {
+                    selectedFile = java.io.File("activemap_export.json")
+                    fileFilter = FileNameExtensionFilter("JSON files", "json")
+                }
+                if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+                    var file = chooser.selectedFile
+                    if (!file.name.endsWith(".json")) {
+                        file = java.io.File(file.absolutePath + ".json")
+                    }
+                    file.writeText(json)
+                }
+            }
+        },
+        onImportData = {
+            withContext(Dispatchers.IO) {
+                val chooser = JFileChooser().apply {
+                    fileFilter = FileNameExtensionFilter("JSON files", "json")
+                }
+                if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+                    chooser.selectedFile.readText()
+                } else {
+                    null
+                }
+            }
+        }
     )
 }

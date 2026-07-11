@@ -10,6 +10,7 @@ import com.activemap.shared.service.OsrmService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,10 +19,11 @@ import kotlinx.coroutines.launch
 
 class LocationViewModel(
     private val repository: LocationRepository,
-    private val locationService: LocationService
+    private val locationService: LocationService,
+    coroutineContext: CoroutineContext = Dispatchers.Default
 ) {
     private val supervisorJob = SupervisorJob()
-    private val viewModelScope = CoroutineScope(supervisorJob + Dispatchers.Default)
+    private val viewModelScope = CoroutineScope(supervisorJob + coroutineContext)
     private val osrmService = OsrmService()
     private val offlineRouteService = OfflineRouteService()
     private val dataExporter = DataExporter(repository)

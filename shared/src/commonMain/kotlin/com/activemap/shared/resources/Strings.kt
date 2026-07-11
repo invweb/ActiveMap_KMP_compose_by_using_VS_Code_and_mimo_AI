@@ -213,4 +213,19 @@ object Strings {
 
     @Composable
     fun activityType(): String = stringResource(Res.string.activity_type)
+
+    @Composable
+    fun export(): String = stringResource(Res.string.export)
+
+    @Composable
+    fun importData(): String = stringResource(Res.string.import_data)
+
+    @Composable
+    fun importedCount(count: Int): String = stringResource(Res.string.imported_count, count)
+
+    @Composable
+    fun exportError(): String = stringResource(Res.string.export_error)
+
+    @Composable
+    fun importError(): String = stringResource(Res.string.import_error)
 }

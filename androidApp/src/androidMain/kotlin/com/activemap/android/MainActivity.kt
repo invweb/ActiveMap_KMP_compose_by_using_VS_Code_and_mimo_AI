@@ -14,6 +14,8 @@ import com.activemap.shared.viewmodel.LocationViewModel
 import com.activemap.android.ui.ActiveMapApp
 import com.activemap.shared.di.appModule
 import com.activemap.android.di.androidModule
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -21,6 +23,9 @@ import org.koin.core.context.startKoin
 
 class MainActivity : ComponentActivity() {
     private val viewModel: LocationViewModel by inject()
+    
+    private var pendingImportContinuation: ((String?) -> Unit)? = null
+    private var pendingExportJson: String? = null
     
     private val locationPermissionRequest = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -33,9 +38,32 @@ class MainActivity : ComponentActivity() {
                 viewModel.centerOnMe()
             }
             else -> {
-                // Permission denied
             }
         }
+    }
+    
+    private val exportDocumentLauncher = registerForActivityResult(
+        ActivityResultContracts.CreateDocument("application/json")
+    ) { uri ->
+        uri?.let {
+            val json = pendingExportJson ?: return@let
+            contentResolver.openOutputStream(it)?.use { stream ->
+                stream.write(json.toByteArray())
+            }
+        }
+        pendingExportJson = null
+    }
+    
+    private val importDocumentLauncher = registerForActivityResult(
+        ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        if (uri != null) {
+            val json = contentResolver.openInputStream(uri)?.use { it.bufferedReader().readText() }
+            pendingImportContinuation?.invoke(json)
+        } else {
+            pendingImportContinuation?.invoke(null)
+        }
+        pendingImportContinuation = null
     }
     
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,7 +83,17 @@ class MainActivity : ComponentActivity() {
                 ) {
                     ActiveMapApp(
                         viewModel = viewModel,
-                        onRequestLocationPermission = { requestLocationPermission() }
+                        onRequestLocationPermission = { requestLocationPermission() },
+                        onExportData = { json ->
+                            pendingExportJson = json
+                            exportDocumentLauncher.launch("activemap_export.json")
+                        },
+                        onImportData = {
+                            suspendCoroutine<String?> { continuation ->
+                                pendingImportContinuation = { json -> continuation.resume(json) }
+                                importDocumentLauncher.launch(arrayOf("application/json", "text/*"))
+                            }
+                        }
                     )
                 }
             }

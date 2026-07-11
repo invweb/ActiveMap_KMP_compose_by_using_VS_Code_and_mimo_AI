@@ -11,7 +11,9 @@ import com.activemap.android.ui.components.MapView
 @Composable
 fun ActiveMapApp(
     viewModel: LocationViewModel,
-    onRequestLocationPermission: () -> Unit = {}
+    onRequestLocationPermission: () -> Unit = {},
+    onExportData: (suspend (String) -> Unit)? = null,
+    onImportData: (suspend () -> String?)? = null
 ) {
     SharedActiveMapApp(
         viewModel = viewModel,
@@ -27,6 +29,8 @@ fun ActiveMapApp(
                 modifier = modifier
             )
         },
-        onCenterOnMe = { onRequestLocationPermission() }
+        onCenterOnMe = { onRequestLocationPermission() },
+        onExportData = onExportData,
+        onImportData = onImportData
     )
 }

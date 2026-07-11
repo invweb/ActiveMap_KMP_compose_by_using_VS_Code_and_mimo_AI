@@ -68,4 +68,9 @@
     <string name="name_is_required_error">Name is required</string>
     <string name="route_not_found">Route not found</string>
     <string name="activity_type">Activity Type</string>
+    <string name="export">Export</string>
+    <string name="import_data">Import</string>
+    <string name="imported_count">Imported locations: %1$d</string>
+    <string name="export_error">Export error</string>
+    <string name="import_error">Import error</string>
 </resources>
