@@ -3,8 +3,8 @@ package com.activemap.web.ui.components
 import androidx.compose.runtime.*
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
-import com.activemap.shared.model.*
-import com.activemap.shared.resources.Strings
+import com.activemap.web.model.*
+import com.activemap.web.model.Strings
 
 @Composable
 fun LocationDetailWeb(
@@ -23,11 +23,10 @@ fun LocationDetailWeb(
                 flexDirection(FlexDirection.Column)
                 height(100.percent)
                 width(100.percent)
-                overflow("auto")
+                property("overflow", "auto")
             }
         }
     ) {
-        // Header
         Div(
             attrs = {
                 style {
@@ -36,7 +35,7 @@ fun LocationDetailWeb(
                     alignItems(AlignItems.Center)
                     padding(16.px)
                     backgroundColor(Color("#f5f5f5"))
-                    borderBottom(1.px, LineStyle.Solid, Color("#e0e0e0"))
+                    property("border-bottom", "1px solid #e0e0e0")
                 }
             }
         ) {
@@ -49,7 +48,7 @@ fun LocationDetailWeb(
                         color(Color("#333"))
                         border(1.px, LineStyle.Solid, Color("#ccc"))
                         borderRadius(4.px)
-                        cursor(Cursor.Pointer)
+                        property("cursor", "pointer")
                     }
                 }
             ) {
@@ -70,10 +69,10 @@ fun LocationDetailWeb(
                         style {
                             padding(8.px, 16.px)
                             backgroundColor(Color("#2196f3"))
-                            color(Color.White)
+                            color(Color("white"))
                             border(1.px, LineStyle.Solid, Color("#1976d2"))
                             borderRadius(4.px)
-                            cursor(Cursor.Pointer)
+                            property("cursor", "pointer")
                         }
                     }
                 ) {
@@ -86,10 +85,10 @@ fun LocationDetailWeb(
                         style {
                             padding(8.px, 16.px)
                             backgroundColor(Color("#f44336"))
-                            color(Color.White)
+                            color(Color("white"))
                             border(1.px, LineStyle.Solid, Color("#d32f2f"))
                             borderRadius(4.px)
-                            cursor(Cursor.Pointer)
+                            property("cursor", "pointer")
                         }
                     }
                 ) {
@@ -98,13 +97,12 @@ fun LocationDetailWeb(
             }
         }
         
-        // Content
         Div(
             attrs = {
                 style {
                     flex(1)
                     padding(16.px)
-                    overflow("auto")
+                    property("overflow", "auto")
                 }
             }
         ) {
@@ -126,7 +124,6 @@ fun LocationDetailWeb(
 
 @Composable
 fun LocationDetailContentWeb(location: Location) {
-    // Basic info
     H1(
         attrs = {
             style {
@@ -163,7 +160,6 @@ fun LocationDetailContentWeb(location: Location) {
         Text("${Strings.status()}: ${location.status.name}")
     }
     
-    // Coordinates
     H2(
         attrs = {
             style {
@@ -198,7 +194,6 @@ fun LocationDetailContentWeb(location: Location) {
         Text("${Strings.longitude()}: ${location.longitude}")
     }
     
-    // Ratings
     H2(
         attrs = {
             style {
@@ -217,7 +212,6 @@ fun LocationDetailContentWeb(location: Location) {
     RatingRowWeb(Strings.noiseLevel(), location.noiseLevel.name)
     RatingRowWeb(Strings.rating(), "${location.rating}/5")
     
-    // Inventory
     H2(
         attrs = {
             style {
@@ -241,7 +235,6 @@ fun LocationDetailContentWeb(location: Location) {
         Text(location.inventory.ifEmpty { Strings.notSpecified() })
     }
     
-    // Notes
     H2(
         attrs = {
             style {
@@ -265,7 +258,6 @@ fun LocationDetailContentWeb(location: Location) {
         Text(location.notes.ifEmpty { Strings.noNotes() })
     }
     
-    // Photos
     H2(
         attrs = {
             style {
@@ -294,7 +286,7 @@ fun LocationDetailContentWeb(location: Location) {
                 attrs = {
                     style {
                         color(Color("#666"))
-                        wordBreak("break-all")
+                        property("word-break", "break-all")
                     }
                 }
             ) {
@@ -312,7 +304,7 @@ fun RatingRowWeb(label: String, value: String) {
                 display(DisplayStyle.Flex)
                 justifyContent(JustifyContent.SpaceBetween)
                 padding(8.px, 0.px)
-                borderBottom(1.px, LineStyle.Solid, Color("#f0f0f0"))
+                property("border-bottom", "1px solid #f0f0f0")
             }
         }
     ) {
@@ -330,7 +322,7 @@ fun RatingRowWeb(label: String, value: String) {
             attrs = {
                 style {
                     color(Color("#333"))
-                    fontWeight("bold")
+                    fontWeight(700)
                 }
             }
         ) {
