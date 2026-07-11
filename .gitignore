@@ -22,6 +22,10 @@ desktopApp/build/
 # Web
 webApp/build/
 webApp/node_modules/
+kotlin-js-store/
+
+# Build artifacts
+result/
 
 # OS
 .DS_Store
