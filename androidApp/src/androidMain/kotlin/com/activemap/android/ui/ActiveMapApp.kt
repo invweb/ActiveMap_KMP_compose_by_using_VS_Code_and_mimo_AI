@@ -15,21 +15,27 @@ fun ActiveMapApp(
     onExportData: (suspend (String) -> Unit)? = null,
     onImportData: (suspend () -> String?)? = null
 ) {
+    var osmMapView by remember { mutableStateOf<org.osmdroid.views.MapView?>(null) }
+
     SharedActiveMapApp(
         viewModel = viewModel,
-        mapView = { locations, onLocationClick, onLongPress, isRouteMode, routeWaypoints, pickedPoint, currentRoute, modifier ->
+        mapView = { locations, onLocationClick, onLongPress, isRouteMode, routeWaypoints, selectedRouteLocations, pickedPoint, currentRoute, modifier ->
             MapView(
                 locations = locations,
                 onLocationClick = onLocationClick,
                 onLongPress = onLongPress,
                 isRouteMode = isRouteMode,
                 routeWaypoints = routeWaypoints,
+                selectedRouteLocations = selectedRouteLocations,
                 pickedPoint = pickedPoint,
                 currentRoute = currentRoute,
+                onMapReady = { osmMapView = it },
                 modifier = modifier
             )
         },
         onCenterOnMe = { onRequestLocationPermission() },
+        onZoomIn = { osmMapView?.controller?.zoomIn() },
+        onZoomOut = { osmMapView?.controller?.zoomOut() },
         onExportData = onExportData,
         onImportData = onImportData
     )

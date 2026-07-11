@@ -1,10 +1,7 @@
 package com.activemap.android.ui.components
 
-import android.content.Context
 import android.graphics.Color
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -33,21 +30,24 @@ fun MapView(
     onLongPress: (Double, Double) -> Unit = { _, _ -> },
     isRouteMode: Boolean = false,
     routeWaypoints: List<Pair<Double, Double>> = emptyList(),
+    selectedRouteLocations: List<Pair<Double, Double>> = emptyList(),
     pickedPoint: Pair<Double, Double>? = null,
     currentRoute: Route? = null,
+    onMapReady: (MapView) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
+    var currentLocations by remember { mutableStateOf(locations) }
+    var mapViewRef by remember { mutableStateOf<MapView?>(null) }
+
+    LaunchedEffect(locations) {
+        currentLocations = locations
+    }
 
     val selectPointText = Strings.selectPoint()
     val routeStartText = Strings.routeStart()
     val routeEndText = Strings.routeEnd()
     val selectRoutePointsText = Strings.selectRoutePoints()
-
-    LaunchedEffect(Unit) {
-        Configuration.getInstance().load(context, context.getSharedPreferences("osm", Context.MODE_PRIVATE))
-        Configuration.getInstance().userAgentValue = context.packageName
-    }
 
     Box(modifier = modifier.fillMaxSize()) {
         AndroidView(
@@ -55,11 +55,28 @@ fun MapView(
                 MapView(ctx).apply {
                     setTileSource(TileSourceFactory.MAPNIK)
                     setMultiTouchControls(true)
+                    setBuiltInZoomControls(false)
                     controller.setZoom(15.0)
                     controller.setCenter(GeoPoint(55.7558, 37.6173))
+                    onMapReady(this)
+                    mapViewRef = this
 
                     val mapEventsReceiver = object : MapEventsReceiver {
-                        override fun singleTapConfirmedHelper(p: GeoPoint?): Boolean = false
+                        override fun singleTapConfirmedHelper(p: GeoPoint?): Boolean {
+                            if (p == null) return false
+                            
+                            val tappedLocation = currentLocations.find { loc ->
+                                val dx = p.latitude - loc.latitude
+                                val dy = p.longitude - loc.longitude
+                                dx * dx + dy * dy < 0.001
+                            }
+                            
+                            if (tappedLocation != null) {
+                                onLocationClick(tappedLocation)
+                                return true
+                            }
+                            return false
+                        }
 
                         override fun longPressHelper(p: GeoPoint?): Boolean {
                             p?.let {
@@ -75,15 +92,16 @@ fun MapView(
                 mapView.overlays.removeAll { it is Marker || it is Polyline }
 
                 if (!isRouteMode) {
-                pickedPoint?.let { point ->
-                    val pickMarker = Marker(mapView).apply {
-                        position = GeoPoint(point.first, point.second)
-                        setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-                        title = selectPointText
-                        snippet = "%.6f, %.6f".format(point.first, point.second)
+                    pickedPoint?.let { point ->
+                        val pickMarker = Marker(mapView).apply {
+                            position = GeoPoint(point.first, point.second)
+                            setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+                            title = selectPointText
+                            snippet = "%.6f, %.6f".format(point.first, point.second)
+                            setInfoWindow(null)
+                        }
+                        mapView.overlays.add(pickMarker)
                     }
-                    mapView.overlays.add(pickMarker)
-                }
                 }
 
                 if (isRouteMode) {
@@ -98,6 +116,7 @@ fun MapView(
                             setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
                             title = label
                             snippet = "%.6f, %.6f".format(waypoint.first, waypoint.second)
+                            setInfoWindow(null)
                         }
                         mapView.overlays.add(marker)
                     }
@@ -118,19 +137,47 @@ fun MapView(
                 }
 
                 locations.forEach { location ->
+                    val isSelected = selectedRouteLocations.any { 
+                        it.first == location.latitude && it.second == location.longitude 
+                    }
                     val marker = Marker(mapView).apply {
                         position = GeoPoint(location.latitude, location.longitude)
                         setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
                         title = location.name
-                        snippet = "${location.activityType.name} - ${location.status.name}"
-
-                        setOnMarkerClickListener { _, _ ->
-                            onLocationClick(location)
-                            true
+                        setInfoWindow(null)
+                        
+                        if (isRouteMode && isSelected) {
+                            val index = selectedRouteLocations.indexOfFirst { 
+                                it.first == location.latitude && it.second == location.longitude 
+                            } + 1
+                            snippet = "Маршрут: точка $index"
+                            
+                            val size = 48
+                            val bitmap = android.graphics.Bitmap.createBitmap(size, size, android.graphics.Bitmap.Config.ARGB_8888)
+                            val canvas = android.graphics.Canvas(bitmap)
+                            val paint = android.graphics.Paint().apply {
+                                color = android.graphics.Color.parseColor("#FF9800")
+                                isAntiAlias = true
+                            }
+                            canvas.drawCircle(size / 2f, size / 2f, size / 2f - 4f, paint)
+                            paint.color = android.graphics.Color.BLACK
+                            paint.style = android.graphics.Paint.Style.STROKE
+                            paint.strokeWidth = 4f
+                            canvas.drawCircle(size / 2f, size / 2f, size / 2f - 4f, paint)
+                            paint.color = android.graphics.Color.BLACK
+                            paint.style = android.graphics.Paint.Style.FILL
+                            paint.textSize = 24f
+                            paint.textAlign = android.graphics.Paint.Align.CENTER
+                            canvas.drawText("$index", size / 2f, size / 2f + 8f, paint)
+                            setIcon(android.graphics.drawable.BitmapDrawable(context.resources, bitmap))
+                        } else {
+                            snippet = "${location.activityType.name} - ${location.status.name}"
                         }
                     }
                     mapView.overlays.add(marker)
                 }
+                
+                mapView.invalidate()
             },
             modifier = Modifier.fillMaxSize()
         )

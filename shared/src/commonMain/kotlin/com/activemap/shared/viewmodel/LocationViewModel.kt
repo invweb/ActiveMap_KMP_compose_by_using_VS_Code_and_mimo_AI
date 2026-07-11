@@ -49,6 +49,9 @@ class LocationViewModel(
     private val _isRouteMode = MutableStateFlow(false)
     val isRouteMode: StateFlow<Boolean> = _isRouteMode.asStateFlow()
     
+    private val _selectedRouteLocations = MutableStateFlow<List<Location>>(emptyList())
+    val selectedRouteLocations: StateFlow<List<Location>> = _selectedRouteLocations.asStateFlow()
+    
     private val _routeWaypoints = MutableStateFlow<List<Pair<Double, Double>>>(emptyList())
     val routeWaypoints: StateFlow<List<Pair<Double, Double>>> = _routeWaypoints.asStateFlow()
     
@@ -188,6 +191,32 @@ class LocationViewModel(
         }
     }
     
+    fun toggleRouteLocation(location: Location) {
+        val current = _selectedRouteLocations.value
+        val exists = current.find { it.id == location.id }
+        _selectedRouteLocations.value = if (exists != null) {
+            current.filter { it.id != location.id }
+        } else {
+            current + location
+        }
+        _currentRoute.value = null
+    }
+    
+    fun buildRouteFromSelected() {
+        val locations = _selectedRouteLocations.value
+        if (locations.size < 2) {
+            _error.value = "Выберите минимум 2 точки"
+            return
+        }
+        _routeWaypoints.value = locations.map { it.latitude to it.longitude }
+        calculateRoute()
+    }
+    
+    fun clearSelectedLocations() {
+        _selectedRouteLocations.value = emptyList()
+        clearRoute()
+    }
+    
     fun setRoutePoint(lat: Double, lng: Double) {
         _routeWaypoints.value = _routeWaypoints.value + (lat to lng)
         _currentRoute.value = null
@@ -210,6 +239,7 @@ class LocationViewModel(
     }
     
     fun clearRoute() {
+        _selectedRouteLocations.value = emptyList()
         _routeWaypoints.value = emptyList()
         _currentRoute.value = null
         _routeError.value = null

@@ -10,13 +10,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.toComposeImageBitmap
 import androidx.compose.ui.unit.dp
 import com.activemap.shared.model.ActivityType
 import com.activemap.shared.model.Location
 import com.activemap.shared.model.Route
 import com.activemap.shared.resources.Strings
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.net.HttpURLConnection
+import java.net.URL
+import javax.imageio.ImageIO
+import kotlin.math.*
 
 @Composable
 fun MapViewDesktop(
@@ -33,105 +42,155 @@ fun MapViewDesktop(
     onZoomOut: () -> Unit = {}
 ) {
     val noLocationsText = Strings.noLocations()
-    var zoomLevel by remember { mutableStateOf(1f) }
+    val legendText = Strings.legend()
+    val sportText = Strings.activitySport()
+    val workText = Strings.activityWork()
+    val restText = Strings.activityRest()
+    val educationText = Strings.activityEducation()
+    val entertainmentText = Strings.activityEntertainment()
+    val routeStartText = Strings.routeStartMarker()
+    val routeEndText = Strings.routeEndMarker()
+    val routeText = Strings.routeLine()
 
-    Box(modifier = modifier.fillMaxSize().background(Color(0xFFE3F2FD))) {
-        Canvas(
-            modifier = Modifier.fillMaxSize().clickable { }
-        ) {
-            drawRect(color = Color(0xFFBBDEFB), topLeft = Offset.Zero, size = size)
+    var zoomLevel by remember { mutableStateOf(6) }
+    var centerLat by remember { mutableStateOf(48.5) }
+    var centerLon by remember { mutableStateOf(31.2) }
+    val tileCache = remember { mutableMapOf<String, ImageBitmap>() }
+    val scope = rememberCoroutineScope()
+    var tileStatus by remember { mutableStateOf("") }
 
-            val gridSpacing = 50f
-            var gx = 0f
-            while (gx <= size.width) {
-                drawLine(color = Color(0xFF90CAF9), start = Offset(gx, 0f), end = Offset(gx, size.height), strokeWidth = 1f)
-                gx += gridSpacing
+    val allPoints = remember(locations, routeWaypoints, pickedPoint, currentRoute) {
+        val pts = mutableListOf<Pair<Double, Double>>()
+        locations.forEach { pts.add(it.latitude to it.longitude) }
+        routeWaypoints.forEach { pts.add(it) }
+        pickedPoint?.let { pts.add(it) }
+        currentRoute?.points?.forEach { pts.add(it.latitude to it.longitude) }
+        pts
+    }
+
+    LaunchedEffect(allPoints) {
+        if (allPoints.size == 1) {
+            centerLat = allPoints[0].first
+            centerLon = allPoints[0].second
+        } else if (allPoints.size > 1) {
+            centerLat = allPoints.map { it.first }.average()
+            centerLon = allPoints.map { it.second }.average()
+        }
+    }
+
+    Box(modifier = modifier.fillMaxSize().background(Color(0xFFE8E8E8))) {
+        Canvas(modifier = Modifier.fillMaxSize().clickable { }) {
+            val tileW = 256f
+            val x0 = lonToTileX(centerLon, zoomLevel)
+            val y0 = latToTileY(centerLat, zoomLevel)
+            val offX = (x0 - floor(x0)) * tileW
+            val offY = (y0 - floor(y0)) * tileW
+            val n = 1 shl zoomLevel
+
+            for (tx in -1..(size.width / tileW + 1).toInt()) {
+                for (ty in -1..(size.height / tileW + 1).toInt()) {
+                    val tileX = floor(x0).toInt() + tx
+                    val tileY = floor(y0).toInt() + ty
+                    if (tileX < 0 || tileX >= n || tileY < 0 || tileY >= n) continue
+                    val key = "$zoomLevel/$tileX/$tileY"
+                    val tile = tileCache[key]
+                    val dx = tx * tileW - offX
+                    val dy = ty * tileW - offY
+                    if (tile != null) {
+                        drawImage(tile, dstOffset = androidx.compose.ui.unit.IntOffset(dx.toInt(), dy.toInt()),
+                            dstSize = androidx.compose.ui.unit.IntSize(tileW.toInt(), tileW.toInt()))
+                    } else {
+                        drawRect(color = Color(0xFFD0D0D0), topLeft = Offset(dx.toFloat(), dy.toFloat()),
+                            size = androidx.compose.ui.geometry.Size(tileW, tileW))
+                        scope.launch {
+                            try {
+                                val url = URL("https://tile.openstreetmap.org/$zoomLevel/$tileX/$tileY.png")
+                                val conn = url.openConnection() as HttpURLConnection
+                                conn.setRequestProperty("User-Agent", "ActiveMap/1.0 (https://github.com/invweb/ActiveMap)")
+                                conn.connectTimeout = 10000
+                                conn.readTimeout = 10000
+                                val code = withContext(Dispatchers.IO) { conn.responseCode }
+                                if (code == 200) {
+                                    val img = withContext(Dispatchers.IO) { ImageIO.read(conn.inputStream) }
+                                    conn.disconnect()
+                                    if (img != null) tileCache[key] = img.toComposeImageBitmap()
+                                } else {
+                                    conn.disconnect()
+                                }
+                            } catch (e: Exception) {
+                                println("Tile error: $key - ${e.message}")
+                            }
+                        }
+                    }
+                }
             }
-            var gy = 0f
-            while (gy <= size.height) {
-                drawLine(color = Color(0xFF90CAF9), start = Offset(0f, gy), end = Offset(size.width, gy), strokeWidth = 1f)
-                gy += gridSpacing
-            }
-
-            val allPoints = mutableListOf<Pair<Double, Double>>()
-            locations.forEach { allPoints.add(it.latitude to it.longitude) }
-            routeWaypoints.forEach { allPoints.add(it) }
-            pickedPoint?.let { allPoints.add(it) }
-            currentRoute?.points?.forEach { allPoints.add(it.latitude to it.longitude) }
 
             if (allPoints.isNotEmpty()) {
-                val minLat = allPoints.minOf { it.first }
-                val maxLat = allPoints.maxOf { it.first }
-                val minLon = allPoints.minOf { it.second }
-                val maxLon = allPoints.maxOf { it.second }
-                val latRange = (maxLat - minLat).coerceAtLeast(0.001)
-                val lonRange = (maxLon - minLon).coerceAtLeast(0.001)
-                val cx = size.width / 2
-                val cy = size.height / 2
+                val minLat = allPoints.minOf { it.first }; val maxLat = allPoints.maxOf { it.first }
+                val minLon = allPoints.minOf { it.second }; val maxLon = allPoints.maxOf { it.second }
+                val latR = (maxLat - minLat).coerceAtLeast(0.001); val lonR = (maxLon - minLon).coerceAtLeast(0.001)
+                val pad = 50f; val mw = (size.width - pad * 2); val mh = (size.height - pad * 2)
+                val cx = size.width / 2; val cy = size.height / 2
+                fun ts(lat: Double, lon: Double) = Offset(
+                    cx + ((lon - (minLon + maxLon) / 2) / lonR * mw).toFloat(),
+                    cy - ((lat - (minLat + maxLat) / 2) / latR * mh).toFloat()
+                )
 
-                fun toScreen(lat: Double, lon: Double): Offset {
-                    val sx = cx + ((lon - (minLon + maxLon) / 2) / lonRange * (size.width - 100)).toFloat() * zoomLevel
-                    val sy = cy - ((lat - (minLat + maxLat) / 2) / latRange * (size.height - 100)).toFloat() * zoomLevel
-                    return Offset(sx, sy)
-                }
-
-                currentRoute?.let { route ->
-                    if (route.points.size >= 2) {
-                        for (i in 0 until route.points.size - 1) {
-                            val s = toScreen(route.points[i].latitude, route.points[i].longitude)
-                            val e = toScreen(route.points[i + 1].latitude, route.points[i + 1].longitude)
-                            drawLine(color = Color(0xFF1565C0), start = s, end = e, strokeWidth = 6f)
-                        }
+                currentRoute?.let { r ->
+                    if (r.points.size >= 2) for (i in 0 until r.points.size - 1) {
+                        drawLine(Color(0xFF1565C0), ts(r.points[i].latitude, r.points[i].longitude),
+                            ts(r.points[i + 1].latitude, r.points[i + 1].longitude), strokeWidth = 6f)
                     }
                 }
-
-                routeWaypoints.forEachIndexed { index, wp ->
-                    val pos = toScreen(wp.first, wp.second)
-                    val color = when (index) {
-                        0 -> Color(0xFF4CAF50); routeWaypoints.lastIndex -> Color(0xFFF44336); else -> Color(0xFFFF9800)
-                    }
-                    drawCircle(color = color, radius = 12f, center = pos)
-                    drawCircle(color = Color.Black, radius = 12f, center = pos, style = Stroke(width = 2f))
+                routeWaypoints.forEachIndexed { i, wp ->
+                    val p = ts(wp.first, wp.second)
+                    val c = when (i) { 0 -> Color(0xFF4CAF50); routeWaypoints.lastIndex -> Color(0xFFF44336); else -> Color(0xFFFF9800) }
+                    drawCircle(c, 12f, p); drawCircle(Color.Black, 12f, p, style = Stroke(2f))
                 }
-
-                pickedPoint?.let { pt ->
-                    val pos = toScreen(pt.first, pt.second)
-                    drawCircle(color = Color(0xFF00BCD4), radius = 12f, center = pos)
-                    drawCircle(color = Color.Black, radius = 12f, center = pos, style = Stroke(width = 2f))
-                }
-
+                pickedPoint?.let { val p = ts(it.first, it.second); drawCircle(Color(0xFF00BCD4), 12f, p); drawCircle(Color.Black, 12f, p, style = Stroke(2f)) }
                 locations.forEach { loc ->
-                    val pos = toScreen(loc.latitude, loc.longitude)
+                    val p = ts(loc.latitude, loc.longitude)
                     val sel = selectedRouteLocations.any { it.first == loc.latitude && it.second == loc.longitude }
-                    val c = when {
-                        isRouteMode && sel -> Color(0xFFFF9800)
-                        else -> when (loc.activityType) {
-                            ActivityType.SPORT -> Color(0xFFF44336); ActivityType.WORK -> Color(0xFF2196F3)
-                            ActivityType.REST -> Color(0xFF4CAF50); ActivityType.EDUCATION -> Color(0xFFFFEB3B)
-                            ActivityType.ENTERTAINMENT -> Color(0xFF9C27B0)
-                        }
-                    }
+                    val c = when { isRouteMode && sel -> Color(0xFFFF9800); else -> when (loc.activityType) {
+                        ActivityType.SPORT -> Color.Red; ActivityType.WORK -> Color.Blue; ActivityType.REST -> Color.Green
+                        ActivityType.EDUCATION -> Color.Yellow; ActivityType.ENTERTAINMENT -> Color.Magenta
+                    }}
                     val r = if (isRouteMode && sel) 20f else 15f
-                    drawCircle(color = c, radius = r, center = pos, style = Fill)
-                    drawCircle(color = Color.Black, radius = r, center = pos, style = Stroke(width = 2f))
+                    drawCircle(c, r, p, style = Fill); drawCircle(Color.Black, r, p, style = Stroke(2f))
                 }
             }
         }
 
         if (locations.isEmpty()) {
             Text(text = noLocationsText, style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.align(Alignment.Center))
+                color = Color(0xFF37474F), modifier = Modifier.align(Alignment.Center))
+        }
+
+        Card(modifier = Modifier.align(Alignment.TopStart).padding(16.dp)) {
+            Column(modifier = Modifier.padding(8.dp)) {
+                Text(text = legendText, style = MaterialTheme.typography.titleSmall)
+                LegendItem(sportText, Color.Red); LegendItem(workText, Color.Blue)
+                LegendItem(restText, Color.Green); LegendItem(educationText, Color.Yellow)
+                LegendItem(entertainmentText, Color.Magenta)
+                if (isRouteMode) { Spacer(modifier = Modifier.height(8.dp)); LegendItem(routeStartText, Color(0xFF4CAF50)); LegendItem(routeEndText, Color(0xFFF44336)); LegendItem(routeText, Color(0xFF1565C0)) }
+            }
         }
 
         Column(modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            FloatingActionButton(onClick = { zoomLevel = (zoomLevel + 0.2f).coerceAtMost(5f); onZoomIn() },
-                modifier = Modifier.size(40.dp), containerColor = MaterialTheme.colorScheme.primaryContainer) {
-                Text("+", style = MaterialTheme.typography.titleMedium)
-            }
-            FloatingActionButton(onClick = { zoomLevel = (zoomLevel - 0.2f).coerceAtLeast(0.3f); onZoomOut() },
-                modifier = Modifier.size(40.dp), containerColor = MaterialTheme.colorScheme.primaryContainer) {
-                Text("\u2212", style = MaterialTheme.typography.titleMedium)
-            }
+            FloatingActionButton(onClick = { zoomLevel = (zoomLevel + 1).coerceAtMost(18); onZoomIn() }, modifier = Modifier.size(40.dp), containerColor = MaterialTheme.colorScheme.primaryContainer) { Text("+") }
+            FloatingActionButton(onClick = { zoomLevel = (zoomLevel - 1).coerceAtLeast(2); onZoomOut() }, modifier = Modifier.size(40.dp), containerColor = MaterialTheme.colorScheme.primaryContainer) { Text("\u2212") }
         }
+    }
+}
+
+private fun lonToTileX(lon: Double, zoom: Int) = (lon + 180.0) / 360.0 * 2.0.pow(zoom.toDouble())
+private fun latToTileY(lat: Double, zoom: Int) = (1.0 - ln(tan(Math.toRadians(lat)) + 1.0 / cos(Math.toRadians(lat))) / PI) / 2.0 * 2.0.pow(zoom.toDouble())
+
+@Composable
+fun LegendItem(text: String, color: Color) {
+    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 2.dp)) {
+        Canvas(modifier = Modifier.size(12.dp)) { drawCircle(color = color) }
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(text = text, style = MaterialTheme.typography.bodySmall)
     }
 }

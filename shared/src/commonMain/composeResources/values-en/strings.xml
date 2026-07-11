@@ -44,8 +44,8 @@
     <string name="route_calculating">Calculating route...</string>
     <string name="route_info">Route: %1$.1f km, %2$s</string>
     <string name="clear_route">Clear Route</string>
-    <string name="select_route_points">Long press to select route points</string>
-    <string name="select_point">Long press to select point</string>
+    <string name="select_route_points">Tap points on map to select route</string>
+    <string name="select_point">Tap on map to select point</string>
     <string name="language">Language</string>
     <string name="russian">Русский</string>
     <string name="english">English</string>
@@ -73,4 +73,7 @@
     <string name="imported_count">Imported locations: %1$d</string>
     <string name="export_error">Export error</string>
     <string name="import_error">Import error</string>
+    <string name="build_route">Build Route</string>
+    <string name="selected_points">Selected points: %1$d</string>
+    <string name="select_at_least_2">Select at least 2 points</string>
 </resources>

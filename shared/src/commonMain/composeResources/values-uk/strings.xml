@@ -44,8 +44,8 @@
     <string name="route_calculating">Побудова маршруту...</string>
     <string name="route_info">Маршрут: %1$.1f км, %2$s</string>
     <string name="clear_route">Очистити маршрут</string>
-    <string name="select_route_points">Довге натискання — вибір точок маршруту</string>
-    <string name="select_point">Довге натискання — вибір точки</string>
+    <string name="select_route_points">Натисніть на точки на карті для вибору маршруту</string>
+    <string name="select_point">Натисніть на карту для вибору точки</string>
     <string name="language">Мова</string>
     <string name="russian">Русский</string>
     <string name="english">English</string>
@@ -73,4 +73,7 @@
     <string name="imported_count">Імпортовано локацій: %1$d</string>
     <string name="export_error">Помилка експорту</string>
     <string name="import_error">Помилка імпорту</string>
+    <string name="build_route">Побудувати маршрут</string>
+    <string name="selected_points">Вибрано точок: %1$d</string>
+    <string name="select_at_least_2">Виберіть мінімум 2 точки</string>
 </resources>

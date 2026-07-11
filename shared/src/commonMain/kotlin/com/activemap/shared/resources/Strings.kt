@@ -228,4 +228,13 @@ object Strings {
 
     @Composable
     fun importError(): String = stringResource(Res.string.import_error)
+
+    @Composable
+    fun buildRoute(): String = stringResource(Res.string.build_route)
+
+    @Composable
+    fun selectedPoints(count: Int): String = stringResource(Res.string.selected_points, count)
+
+    @Composable
+    fun selectAtLeast2(): String = stringResource(Res.string.select_at_least_2)
 }

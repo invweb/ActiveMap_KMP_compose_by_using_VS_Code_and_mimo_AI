@@ -44,8 +44,8 @@
     <string name="route_calculating">Route wird berechnet...</string>
     <string name="route_info">Route: %1$.1f km, %2$s</string>
     <string name="clear_route">Route löschen</string>
-    <string name="select_route_points">Lang drücken, um Routenpunkte auszuwählen</string>
-    <string name="select_point">Lang drücken, um Punkt auszuwählen</string>
+    <string name="select_route_points">Tippen Sie auf Punkte auf der Karte, um Route auszuwählen</string>
+    <string name="select_point">Tippen Sie auf die Karte, um Punkt auszuwählen</string>
     <string name="language">Sprache</string>
     <string name="russian">Русский</string>
     <string name="english">English</string>
@@ -73,4 +73,7 @@
     <string name="imported_count">Standorte importiert: %1$d</string>
     <string name="export_error">Exportfehler</string>
     <string name="import_error">Importfehler</string>
+    <string name="build_route">Route berechnen</string>
+    <string name="selected_points">Ausgewählte Punkte: %1$d</string>
+    <string name="select_at_least_2">Wählen Sie mindestens 2 Punkte</string>
 </resources>

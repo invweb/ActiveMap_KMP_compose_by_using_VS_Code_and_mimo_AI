@@ -30,11 +30,14 @@ fun SharedActiveMapApp(
         onLongPress: (Double, Double) -> Unit,
         isRouteMode: Boolean,
         routeWaypoints: List<Pair<Double, Double>>,
+        selectedRouteLocations: List<Pair<Double, Double>>,
         pickedPoint: Pair<Double, Double>?,
         currentRoute: Route?,
         modifier: Modifier
     ) -> Unit,
     onCenterOnMe: () -> Unit = {},
+    onZoomIn: () -> Unit = {},
+    onZoomOut: () -> Unit = {},
     onExportData: (suspend (String) -> Unit)? = null,
     onImportData: (suspend () -> String?)? = null
 ) {
@@ -45,6 +48,7 @@ fun SharedActiveMapApp(
     val pickedLatLng by viewModel.pickedLatLng.collectAsState()
     val pickedPoint by viewModel.pickedPoint.collectAsState()
     val isRouteMode by viewModel.isRouteMode.collectAsState()
+    val selectedRouteLocations by viewModel.selectedRouteLocations.collectAsState()
     val routeWaypoints by viewModel.routeWaypoints.collectAsState()
     val currentRoute by viewModel.currentRoute.collectAsState()
     val isCalculatingRoute by viewModel.isCalculatingRoute.collectAsState()
@@ -196,21 +200,26 @@ fun SharedActiveMapApp(
                                 Icon(Icons.Default.Add, contentDescription = Strings.clearRoute())
                             }
                         }
-                        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                            FloatingActionButton(
-                                onClick = { onCenterOnMe() },
-                                containerColor = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.size(56.dp)
-                            ) {
-                                Icon(Icons.Default.LocationOn, contentDescription = Strings.centerOnMe())
-                            }
-                            FloatingActionButton(
-                                onClick = { viewModel.startAddingLocation() },
-                                containerColor = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.size(56.dp)
-                            ) {
-                                Icon(Icons.Default.Add, contentDescription = Strings.addLocation())
-                            }
+                        SmallFloatingActionButton(
+                            onClick = { onZoomIn() },
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        ) {
+                            Icon(Icons.Default.Add, contentDescription = "Zoom in")
+                        }
+                        SmallFloatingActionButton(
+                            onClick = { onZoomOut() },
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        ) {
+                            Text("−", style = MaterialTheme.typography.titleLarge)
+                        }
+                        FloatingActionButton(
+                            onClick = { onCenterOnMe() },
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(56.dp)
+                        ) {
+                            Icon(Icons.Default.LocationOn, contentDescription = Strings.centerOnMe())
                         }
                     }
                 },
@@ -236,7 +245,13 @@ fun SharedActiveMapApp(
                         Box(modifier = Modifier.padding(paddingValues)) {
                             mapView(
                                 locations,
-                                { viewModel.selectLocation(it) },
+                                { location ->
+                                    if (isRouteMode) {
+                                        viewModel.toggleRouteLocation(location)
+                                    } else {
+                                        viewModel.selectLocation(location)
+                                    }
+                                },
                                 { lat, lng ->
                                     if (isRouteMode) {
                                         viewModel.setRoutePoint(lat, lng)
@@ -246,6 +261,7 @@ fun SharedActiveMapApp(
                                 },
                                 isRouteMode,
                                 routeWaypoints,
+                                selectedRouteLocations.map { it.latitude to it.longitude },
                                 pickedPoint,
                                 currentRoute,
                                 Modifier.fillMaxSize()
@@ -266,6 +282,49 @@ fun SharedActiveMapApp(
                                         .padding(16.dp)
                                 ) {
                                     Text(error)
+                                }
+                            }
+                            
+                            if (isRouteMode && selectedRouteLocations.isNotEmpty() && currentRoute == null) {
+                                Card(
+                                    modifier = Modifier
+                                        .align(Alignment.BottomCenter)
+                                        .padding(16.dp)
+                                        .fillMaxWidth(),
+                                    colors = CardDefaults.cardColors(
+                                        containerColor = MaterialTheme.colorScheme.surface
+                                    ),
+                                    elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+                                ) {
+                                    Column(
+                                        modifier = Modifier.padding(16.dp),
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
+                                        Text(
+                                            text = Strings.selectedPoints(selectedRouteLocations.size),
+                                            style = MaterialTheme.typography.titleSmall,
+                                            modifier = Modifier.padding(bottom = 8.dp)
+                                        )
+                                        Text(
+                                            text = selectedRouteLocations.joinToString(" → ") { it.name },
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            modifier = Modifier.padding(bottom = 12.dp)
+                                        )
+                                        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                                            OutlinedButton(
+                                                onClick = { viewModel.clearSelectedLocations() }
+                                            ) {
+                                                Text(Strings.cancel())
+                                            }
+                                            Button(
+                                                onClick = { viewModel.buildRouteFromSelected() },
+                                                enabled = selectedRouteLocations.size >= 2
+                                            ) {
+                                                Text(Strings.buildRoute())
+                                            }
+                                        }
+                                    }
                                 }
                             }
                             
