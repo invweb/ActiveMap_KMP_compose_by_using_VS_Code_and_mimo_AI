@@ -28,7 +28,16 @@ class OsrmService {
         endLat: Double,
         endLng: Double
     ): Route {
-        val coordinates = "$startLng,$startLat;$endLng,$endLat"
+        return getMultiRoute(listOf(
+            RoutePoint(startLat, startLng),
+            RoutePoint(endLat, endLng)
+        ))
+    }
+
+    suspend fun getMultiRoute(waypoints: List<RoutePoint>): Route {
+        require(waypoints.size >= 2) { "Need at least 2 waypoints" }
+
+        val coordinates = waypoints.joinToString(";") { "${it.longitude},${it.latitude}" }
         val response: OsrmResponse = client.get("$baseUrl/route/v1/foot/$coordinates") {
             parameter("overview", "full")
             parameter("geometries", "geojson")
@@ -43,10 +52,11 @@ class OsrmService {
         val geometry = route.geometry.coordinates
 
         return Route(
-            startLatitude = startLat,
-            startLongitude = startLng,
-            endLatitude = endLat,
-            endLongitude = endLng,
+            startLatitude = waypoints.first().latitude,
+            startLongitude = waypoints.first().longitude,
+            endLatitude = waypoints.last().latitude,
+            endLongitude = waypoints.last().longitude,
+            waypoints = waypoints,
             points = geometry.map { RoutePoint(latitude = it[1], longitude = it[0]) },
             distanceMeters = route.distance,
             durationSeconds = route.duration

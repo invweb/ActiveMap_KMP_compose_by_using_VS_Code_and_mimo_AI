@@ -17,14 +17,14 @@ fun ActiveMapApp(
 ) {
     SharedActiveMapApp(
         viewModel = viewModel,
-        mapView = { locations, onLocationClick, onLongPress, isRouteMode, routeStart, routeEnd, currentRoute, modifier ->
+        mapView = { locations, onLocationClick, onLongPress, isRouteMode, routeWaypoints, pickedPoint, currentRoute, modifier ->
             MapView(
                 locations = locations,
                 onLocationClick = onLocationClick,
                 onLongPress = onLongPress,
                 isRouteMode = isRouteMode,
-                routeStart = routeStart,
-                routeEnd = routeEnd,
+                routeWaypoints = routeWaypoints,
+                pickedPoint = pickedPoint,
                 currentRoute = currentRoute,
                 modifier = modifier
             )

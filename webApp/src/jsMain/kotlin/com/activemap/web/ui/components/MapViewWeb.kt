@@ -14,8 +14,8 @@ fun MapViewWeb(
     onLocationClick: (Location) -> Unit,
     onMapClick: (Double, Double) -> Unit = { _, _ -> },
     isRouteMode: Boolean = false,
-    routeStart: Pair<Double, Double>? = null,
-    routeEnd: Pair<Double, Double>? = null,
+    routeWaypoints: List<Pair<Double, Double>> = emptyList(),
+    pickedPoint: Pair<Double, Double>? = null,
     currentRoute: Route? = null
 ) {
     val noLocationsText = Strings.noLocations()
@@ -30,6 +30,7 @@ fun MapViewWeb(
     val routeText = Strings.routeLine()
     val routeStartMarkerText = Strings.routeStartMarker()
     val routeEndMarkerText = Strings.routeEndMarker()
+    val selectPointText = Strings.selectPoint()
     Div(
         attrs = {
             style {
@@ -60,8 +61,8 @@ fun MapViewWeb(
         ) {
             val allPoints = mutableListOf<Pair<Double, Double>>()
             locations.forEach { allPoints.add(it.latitude to it.longitude) }
-            routeStart?.let { allPoints.add(it) }
-            routeEnd?.let { allPoints.add(it) }
+            routeWaypoints.forEach { allPoints.add(it) }
+            pickedPoint?.let { allPoints.add(it) }
             currentRoute?.points?.forEach { allPoints.add(it.latitude to it.longitude) }
             
             if (allPoints.isEmpty()) {
@@ -124,9 +125,19 @@ fun MapViewWeb(
                     }
                 }
                 
-                routeStart?.let { start ->
-                    val x = ((start.second - minLon) / lonRange * 100).coerceIn(5.0, 95.0)
-                    val y = ((maxLat - start.first) / latRange * 100).coerceIn(5.0, 95.0)
+                routeWaypoints.forEachIndexed { index, waypoint ->
+                    val x = ((waypoint.second - minLon) / lonRange * 100).coerceIn(5.0, 95.0)
+                    val y = ((maxLat - waypoint.first) / latRange * 100).coerceIn(5.0, 95.0)
+                    val color = when (index) {
+                        0 -> "#4caf50"
+                        routeWaypoints.lastIndex -> "#f44336"
+                        else -> "#ff9800"
+                    }
+                    val label = when (index) {
+                        0 -> routeStartMarkerText
+                        routeWaypoints.lastIndex -> routeEndMarkerText
+                        else -> "${index + 1}"
+                    }
                     
                     Div(
                         attrs = {
@@ -136,20 +147,20 @@ fun MapViewWeb(
                                 top("${y}%")
                                 width(20.px)
                                 height(20.px)
-                                backgroundColor(Color("#4caf50"))
+                                backgroundColor(Color(color))
                                 borderRadius(50.percent)
                                 border(2.px, LineStyle.Solid, Color.Black)
                                 transform("translate(-50%, -50%)")
                                 zIndex(11)
                             }
-                            title(routeStartMarkerText)
+                            title(label)
                         }
                     )
                 }
                 
-                routeEnd?.let { end ->
-                    val x = ((end.second - minLon) / lonRange * 100).coerceIn(5.0, 95.0)
-                    val y = ((maxLat - end.first) / latRange * 100).coerceIn(5.0, 95.0)
+                pickedPoint?.let { point ->
+                    val x = ((point.second - minLon) / lonRange * 100).coerceIn(5.0, 95.0)
+                    val y = ((maxLat - point.first) / latRange * 100).coerceIn(5.0, 95.0)
                     
                     Div(
                         attrs = {
@@ -159,13 +170,13 @@ fun MapViewWeb(
                                 top("${y}%")
                                 width(20.px)
                                 height(20.px)
-                                backgroundColor(Color("#f44336"))
+                                backgroundColor(Color("#00bcd4"))
                                 borderRadius(50.percent)
                                 border(2.px, LineStyle.Solid, Color.Black)
                                 transform("translate(-50%, -50%)")
                                 zIndex(11)
                             }
-                            title(routeEndMarkerText)
+                            title(selectPointText)
                         }
                     )
                 }

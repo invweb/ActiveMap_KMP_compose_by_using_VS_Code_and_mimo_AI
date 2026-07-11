@@ -16,14 +16,14 @@ import javax.swing.filechooser.FileNameExtensionFilter
 fun ActiveMapDesktopApp(viewModel: LocationViewModel) {
     SharedActiveMapApp(
         viewModel = viewModel,
-        mapView = { locations, onLocationClick, onLongPress, isRouteMode, routeStart, routeEnd, currentRoute, modifier ->
+        mapView = { locations, onLocationClick, onLongPress, isRouteMode, routeWaypoints, pickedPoint, currentRoute, modifier ->
             MapViewDesktop(
                 locations = locations,
                 onLocationClick = onLocationClick,
                 onMapClick = onLongPress,
                 isRouteMode = isRouteMode,
-                routeStart = routeStart,
-                routeEnd = routeEnd,
+                routeWaypoints = routeWaypoints,
+                pickedPoint = pickedPoint,
                 currentRoute = currentRoute,
                 modifier = modifier
             )

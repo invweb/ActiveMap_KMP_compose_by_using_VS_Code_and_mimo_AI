@@ -27,8 +27,8 @@ fun MapViewDesktop(
     onLocationClick: (Location) -> Unit,
     onMapClick: (Double, Double) -> Unit = { _, _ -> },
     isRouteMode: Boolean = false,
-    routeStart: Pair<Double, Double>? = null,
-    routeEnd: Pair<Double, Double>? = null,
+    routeWaypoints: List<Pair<Double, Double>> = emptyList(),
+    pickedPoint: Pair<Double, Double>? = null,
     currentRoute: Route? = null,
     modifier: Modifier = Modifier
 ) {
@@ -75,8 +75,8 @@ fun MapViewDesktop(
             
             val allPoints = mutableListOf<Pair<Double, Double>>()
             locations.forEach { allPoints.add(it.latitude to it.longitude) }
-            routeStart?.let { allPoints.add(it) }
-            routeEnd?.let { allPoints.add(it) }
+            routeWaypoints.forEach { allPoints.add(it) }
+            pickedPoint?.let { allPoints.add(it) }
             currentRoute?.points?.forEach { allPoints.add(it.latitude to it.longitude) }
             
             if (allPoints.isNotEmpty()) {
@@ -113,15 +113,20 @@ fun MapViewDesktop(
                     }
                 }
                 
-                routeStart?.let { start ->
-                    val pos = toScreen(start.first, start.second)
-                    drawCircle(color = Color.Green, radius = 12f, center = pos)
+                routeWaypoints.forEachIndexed { index, waypoint ->
+                    val pos = toScreen(waypoint.first, waypoint.second)
+                    val color = when (index) {
+                        0 -> Color.Green
+                        routeWaypoints.lastIndex -> Color.Red
+                        else -> Color(0xFFFF9800)
+                    }
+                    drawCircle(color = color, radius = 12f, center = pos)
                     drawCircle(color = Color.Black, radius = 12f, center = pos, style = androidx.compose.ui.graphics.drawscope.Stroke(width = 2f))
                 }
                 
-                routeEnd?.let { end ->
-                    val pos = toScreen(end.first, end.second)
-                    drawCircle(color = Color.Red, radius = 12f, center = pos)
+                pickedPoint?.let { point ->
+                    val pos = toScreen(point.first, point.second)
+                    drawCircle(color = Color(0xFF00BCD4), radius = 12f, center = pos)
                     drawCircle(color = Color.Black, radius = 12f, center = pos, style = androidx.compose.ui.graphics.drawscope.Stroke(width = 2f))
                 }
                 
@@ -166,16 +171,6 @@ fun MapViewDesktop(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.align(Alignment.Center)
             )
-        }
-        
-        FloatingActionButton(
-            onClick = { },
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(16.dp),
-            containerColor = MaterialTheme.colorScheme.primaryContainer
-        ) {
-            Icon(Icons.Default.LocationOn, contentDescription = centerOnMeText)
         }
         
         Card(

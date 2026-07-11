@@ -13,14 +13,14 @@ import kotlin.coroutines.resume
 fun ActiveMapWebApp(viewModel: LocationViewModel) {
     SharedActiveMapApp(
         viewModel = viewModel,
-        mapView = { locations, onLocationClick, onLongPress, isRouteMode, routeStart, routeEnd, currentRoute, modifier ->
+        mapView = { locations, onLocationClick, onLongPress, isRouteMode, routeWaypoints, pickedPoint, currentRoute, modifier ->
             MapViewWeb(
                 locations = locations,
                 onLocationClick = onLocationClick,
                 onMapClick = { x, y -> onLongPress(x, y) },
                 isRouteMode = isRouteMode,
-                routeStart = routeStart,
-                routeEnd = routeEnd,
+                routeWaypoints = routeWaypoints,
+                pickedPoint = pickedPoint,
                 currentRoute = currentRoute
             )
         },

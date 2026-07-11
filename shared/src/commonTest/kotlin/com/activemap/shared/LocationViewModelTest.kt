@@ -152,11 +152,22 @@ class LocationViewModelTest {
         viewModel.toggleRouteMode()
         viewModel.setRoutePoint(55.0, 37.0)
 
-        assertEquals(55.0 to 37.0, viewModel.routeStart.value)
-        assertNull(viewModel.routeEnd.value)
+        assertEquals(1, viewModel.routeWaypoints.value.size)
+        assertEquals(55.0 to 37.0, viewModel.routeWaypoints.value[0])
 
         viewModel.setRoutePoint(56.0, 38.0)
-        assertEquals(56.0 to 38.0, viewModel.routeEnd.value)
+        assertEquals(2, viewModel.routeWaypoints.value.size)
+        assertEquals(56.0 to 38.0, viewModel.routeWaypoints.value[1])
+    }
+
+    @Test
+    fun testSetMultipleRoutePoints() {
+        viewModel.toggleRouteMode()
+        viewModel.setRoutePoint(55.0, 37.0)
+        viewModel.setRoutePoint(56.0, 38.0)
+        viewModel.setRoutePoint(57.0, 39.0)
+
+        assertEquals(3, viewModel.routeWaypoints.value.size)
     }
 
     @Test
@@ -166,8 +177,7 @@ class LocationViewModelTest {
         viewModel.setRoutePoint(56.0, 38.0)
 
         viewModel.clearRoute()
-        assertNull(viewModel.routeStart.value)
-        assertNull(viewModel.routeEnd.value)
+        assertTrue(viewModel.routeWaypoints.value.isEmpty())
         assertNull(viewModel.currentRoute.value)
     }
 

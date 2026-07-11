@@ -8,6 +8,7 @@ data class Route(
     val startLongitude: Double,
     val endLatitude: Double,
     val endLongitude: Double,
+    val waypoints: List<RoutePoint> = emptyList(),
     val points: List<RoutePoint>,
     val distanceMeters: Double,
     val durationSeconds: Double

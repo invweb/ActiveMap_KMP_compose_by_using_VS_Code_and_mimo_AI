@@ -43,14 +43,14 @@ class LocationViewModel(
     private val _pickedLatLng = MutableStateFlow<Pair<Double, Double>?>(null)
     val pickedLatLng: StateFlow<Pair<Double, Double>?> = _pickedLatLng.asStateFlow()
     
+    private val _pickedPoint = MutableStateFlow<Pair<Double, Double>?>(null)
+    val pickedPoint: StateFlow<Pair<Double, Double>?> = _pickedPoint.asStateFlow()
+    
     private val _isRouteMode = MutableStateFlow(false)
     val isRouteMode: StateFlow<Boolean> = _isRouteMode.asStateFlow()
     
-    private val _routeStart = MutableStateFlow<Pair<Double, Double>?>(null)
-    val routeStart: StateFlow<Pair<Double, Double>?> = _routeStart.asStateFlow()
-    
-    private val _routeEnd = MutableStateFlow<Pair<Double, Double>?>(null)
-    val routeEnd: StateFlow<Pair<Double, Double>?> = _routeEnd.asStateFlow()
+    private val _routeWaypoints = MutableStateFlow<List<Pair<Double, Double>>>(emptyList())
+    val routeWaypoints: StateFlow<List<Pair<Double, Double>>> = _routeWaypoints.asStateFlow()
     
     private val _currentRoute = MutableStateFlow<Route?>(null)
     val currentRoute: StateFlow<Route?> = _currentRoute.asStateFlow()
@@ -117,12 +117,14 @@ class LocationViewModel(
     
     fun startAddingLocationAt(lat: Double, lng: Double) {
         _pickedLatLng.value = lat to lng
+        _pickedPoint.value = lat to lng
         _isAddingLocation.value = true
     }
     
     fun cancelAddingLocation() {
         _isAddingLocation.value = false
         _pickedLatLng.value = null
+        _pickedPoint.value = null
     }
     
     fun saveLocation(location: Location, onComplete: () -> Unit) {
@@ -187,19 +189,28 @@ class LocationViewModel(
     }
     
     fun setRoutePoint(lat: Double, lng: Double) {
-        if (_routeStart.value == null) {
-            _routeStart.value = lat to lng
-            _routeEnd.value = null
-            _currentRoute.value = null
-        } else if (_routeEnd.value == null) {
-            _routeEnd.value = lat to lng
+        _routeWaypoints.value = _routeWaypoints.value + (lat to lng)
+        _currentRoute.value = null
+        if (_routeWaypoints.value.size >= 2) {
             calculateRoute()
         }
     }
     
+    fun removeLastWaypoint() {
+        val current = _routeWaypoints.value
+        if (current.isNotEmpty()) {
+            _routeWaypoints.value = current.dropLast(1)
+            _currentRoute.value = null
+            if (_routeWaypoints.value.size >= 2) {
+                calculateRoute()
+            } else if (_routeWaypoints.value.isEmpty()) {
+                _routeWaypoints.value = emptyList()
+            }
+        }
+    }
+    
     fun clearRoute() {
-        _routeStart.value = null
-        _routeEnd.value = null
+        _routeWaypoints.value = emptyList()
         _currentRoute.value = null
         _routeError.value = null
     }
@@ -223,27 +234,19 @@ class LocationViewModel(
     }
     
     private fun calculateRoute() {
-        val start = _routeStart.value ?: return
-        val end = _routeEnd.value ?: return
+        val waypoints = _routeWaypoints.value
+        if (waypoints.size < 2) return
         
         viewModelScope.launch {
             _isCalculatingRoute.value = true
             _routeError.value = null
             try {
                 val route = try {
-                    osrmService.getRoute(
-                        startLat = start.first,
-                        startLng = start.second,
-                        endLat = end.first,
-                        endLng = end.second
-                    )
+                    val routePoints = waypoints.map { RoutePoint(it.first, it.second) }
+                    osrmService.getMultiRoute(routePoints)
                 } catch (e: Exception) {
-                    offlineRouteService.calculateStraightLineRoute(
-                        startLat = start.first,
-                        startLng = start.second,
-                        endLat = end.first,
-                        endLng = end.second
-                    )
+                    val routePoints = waypoints.map { RoutePoint(it.first, it.second) }
+                    offlineRouteService.calculateMultiPointRoute(routePoints)
                 }
                 _currentRoute.value = route
             } catch (e: Exception) {

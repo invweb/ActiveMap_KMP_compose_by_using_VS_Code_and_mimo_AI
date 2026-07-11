@@ -29,8 +29,8 @@ fun SharedActiveMapApp(
         onLocationClick: (Location) -> Unit,
         onLongPress: (Double, Double) -> Unit,
         isRouteMode: Boolean,
-        routeStart: Pair<Double, Double>?,
-        routeEnd: Pair<Double, Double>?,
+        routeWaypoints: List<Pair<Double, Double>>,
+        pickedPoint: Pair<Double, Double>?,
         currentRoute: Route?,
         modifier: Modifier
     ) -> Unit,
@@ -43,9 +43,9 @@ fun SharedActiveMapApp(
     val isAddingLocation by viewModel.isAddingLocation.collectAsState()
     val currentFilter by viewModel.currentFilter.collectAsState()
     val pickedLatLng by viewModel.pickedLatLng.collectAsState()
+    val pickedPoint by viewModel.pickedPoint.collectAsState()
     val isRouteMode by viewModel.isRouteMode.collectAsState()
-    val routeStart by viewModel.routeStart.collectAsState()
-    val routeEnd by viewModel.routeEnd.collectAsState()
+    val routeWaypoints by viewModel.routeWaypoints.collectAsState()
     val currentRoute by viewModel.currentRoute.collectAsState()
     val isCalculatingRoute by viewModel.isCalculatingRoute.collectAsState()
     val routeError by viewModel.routeError.collectAsState()
@@ -186,15 +186,8 @@ fun SharedActiveMapApp(
                     )
                 },
                 floatingActionButton = {
-                    Column {
-                        FloatingActionButton(
-                            onClick = { onCenterOnMe() },
-                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                            modifier = Modifier.padding(bottom = 8.dp)
-                        ) {
-                            Icon(Icons.Default.LocationOn, contentDescription = Strings.centerOnMe())
-                        }
-                        if (isRouteMode && (routeStart != null || routeEnd != null)) {
+                    Column(horizontalAlignment = Alignment.End) {
+                        if (isRouteMode && routeWaypoints.isNotEmpty()) {
                             FloatingActionButton(
                                 onClick = { viewModel.clearRoute() },
                                 containerColor = MaterialTheme.colorScheme.errorContainer,
@@ -203,11 +196,21 @@ fun SharedActiveMapApp(
                                 Icon(Icons.Default.Add, contentDescription = Strings.clearRoute())
                             }
                         }
-                        FloatingActionButton(
-                            onClick = { viewModel.startAddingLocation() },
-                            containerColor = MaterialTheme.colorScheme.primary
-                        ) {
-                            Icon(Icons.Default.Add, contentDescription = Strings.addLocation())
+                        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                            FloatingActionButton(
+                                onClick = { onCenterOnMe() },
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(56.dp)
+                            ) {
+                                Icon(Icons.Default.LocationOn, contentDescription = Strings.centerOnMe())
+                            }
+                            FloatingActionButton(
+                                onClick = { viewModel.startAddingLocation() },
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(56.dp)
+                            ) {
+                                Icon(Icons.Default.Add, contentDescription = Strings.addLocation())
+                            }
                         }
                     }
                 },
@@ -242,8 +245,8 @@ fun SharedActiveMapApp(
                                     }
                                 },
                                 isRouteMode,
-                                routeStart,
-                                routeEnd,
+                                routeWaypoints,
+                                pickedPoint,
                                 currentRoute,
                                 Modifier.fillMaxSize()
                             )

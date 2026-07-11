@@ -32,18 +32,16 @@ fun MapView(
     onLocationClick: (Location) -> Unit,
     onLongPress: (Double, Double) -> Unit = { _, _ -> },
     isRouteMode: Boolean = false,
-    routeStart: Pair<Double, Double>? = null,
-    routeEnd: Pair<Double, Double>? = null,
+    routeWaypoints: List<Pair<Double, Double>> = emptyList(),
+    pickedPoint: Pair<Double, Double>? = null,
     currentRoute: Route? = null,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    var pickedPoint by remember { mutableStateOf<GeoPoint?>(null) }
 
     val selectPointText = Strings.selectPoint()
     val routeStartText = Strings.routeStart()
     val routeEndText = Strings.routeEnd()
-    val centerOnMeText = Strings.centerOnMe()
     val selectRoutePointsText = Strings.selectRoutePoints()
 
     LaunchedEffect(Unit) {
@@ -65,12 +63,7 @@ fun MapView(
 
                         override fun longPressHelper(p: GeoPoint?): Boolean {
                             p?.let {
-                                if (isRouteMode) {
-                                    onLongPress(it.latitude, it.longitude)
-                                } else {
-                                    pickedPoint = it
-                                    onLongPress(it.latitude, it.longitude)
-                                }
+                                onLongPress(it.latitude, it.longitude)
                             }
                             return true
                         }
@@ -84,34 +77,29 @@ fun MapView(
                 if (!isRouteMode) {
                 pickedPoint?.let { point ->
                     val pickMarker = Marker(mapView).apply {
-                        position = point
+                        position = GeoPoint(point.first, point.second)
                         setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
                         title = selectPointText
-                        snippet = "%.6f, %.6f".format(point.latitude, point.longitude)
+                        snippet = "%.6f, %.6f".format(point.first, point.second)
                     }
                     mapView.overlays.add(pickMarker)
                 }
                 }
 
                 if (isRouteMode) {
-                    routeStart?.let { start ->
-                        val startMarker = Marker(mapView).apply {
-                            position = GeoPoint(start.first, start.second)
-                            setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-                            title = routeStartText
-                            snippet = "%.6f, %.6f".format(start.first, start.second)
+                    routeWaypoints.forEachIndexed { index, waypoint ->
+                        val label = when (index) {
+                            0 -> routeStartText
+                            routeWaypoints.lastIndex -> routeEndText
+                            else -> "${index + 1}"
                         }
-                        mapView.overlays.add(startMarker)
-                    }
-                    
-                    routeEnd?.let { end ->
-                        val endMarker = Marker(mapView).apply {
-                            position = GeoPoint(end.first, end.second)
+                        val marker = Marker(mapView).apply {
+                            position = GeoPoint(waypoint.first, waypoint.second)
                             setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-                            title = routeEndText
-                            snippet = "%.6f, %.6f".format(end.first, end.second)
+                            title = label
+                            snippet = "%.6f, %.6f".format(waypoint.first, waypoint.second)
                         }
-                        mapView.overlays.add(endMarker)
+                        mapView.overlays.add(marker)
                     }
                 }
 
@@ -147,19 +135,9 @@ fun MapView(
             modifier = Modifier.fillMaxSize()
         )
 
-        FloatingActionButton(
-            onClick = { },
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(16.dp),
-            containerColor = MaterialTheme.colorScheme.primaryContainer
-        ) {
-            Icon(Icons.Default.LocationOn, contentDescription = centerOnMeText)
-        }
-
         Card(
             modifier = Modifier
-                .align(Alignment.BottomStart)
+                .align(Alignment.TopStart)
                 .padding(16.dp)
         ) {
             Text(
