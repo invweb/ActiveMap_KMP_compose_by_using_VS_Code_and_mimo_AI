@@ -10,6 +10,7 @@
         tools:ignore="ScopedStorage" />
 
     <application
+        android:name=".ActiveMapApplication"
         android:allowBackup="true"
         android:label="Active Map"
         android:supportsRtl="true"

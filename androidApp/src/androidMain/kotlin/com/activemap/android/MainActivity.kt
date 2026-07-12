@@ -12,15 +12,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.activemap.shared.viewmodel.LocationViewModel
 import com.activemap.android.ui.ActiveMapApp
-import com.activemap.shared.di.appModule
-import com.activemap.android.di.androidModule
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import org.koin.android.ext.android.inject
-import org.koin.android.ext.koin.androidContext
-import org.koin.android.ext.koin.androidLogger
-import org.koin.core.context.GlobalContext
-import org.koin.core.context.startKoin
 
 class MainActivity : ComponentActivity() {
     private val viewModel: LocationViewModel by inject()
@@ -69,14 +63,6 @@ class MainActivity : ComponentActivity() {
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
-        if (GlobalContext.getOrNull() == null) {
-            startKoin {
-                androidLogger()
-                androidContext(this@MainActivity)
-                modules(appModule, androidModule)
-            }
-        }
         
         setContent {
             MaterialTheme {

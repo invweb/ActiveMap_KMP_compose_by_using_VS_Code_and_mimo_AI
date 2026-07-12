@@ -175,8 +175,9 @@ object Strings {
 
     @Composable
     fun routeInfo(distanceKm: Double, durationText: String): String {
-        val dist = "%.1f".format(distanceKm)
-        return stringResource(Res.string.route_info, dist, durationText)
+        val dist = kotlin.math.round(distanceKm * 10) / 10
+        val distStr = if (dist == dist.toLong().toDouble()) dist.toLong().toString() else dist.toString()
+        return stringResource(Res.string.route_info, distStr, durationText)
     }
 
     @Composable
