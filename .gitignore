@@ -1,3 +1,35 @@
-Binary cache files
-.kotlin/
-gradle/gradle-daemon-jvm.properties
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Android
+androidApp/build/
+local.properties
+*.apk
+*.aab
+
+# Desktop
+desktopApp/build/
+
+# Web
+webApp/build/
+webApp/node_modules/
+kotlin-js-store/
+
+# Build artifacts
+result/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
