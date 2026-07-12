@@ -42,7 +42,7 @@
     <string name="route_end">Кінець</string>
     <string name="route_line">Маршрут</string>
     <string name="route_calculating">Побудова маршруту...</string>
-    <string name="route_info">Маршрут: %1$.1f км, %2$s</string>
+    <string name="route_info">Маршрут: %s км, %s</string>
     <string name="clear_route">Очистити маршрут</string>
     <string name="select_route_points">Натисніть на точки на карті для вибору маршруту</string>
     <string name="select_point">Натисніть на карту для вибору точки</string>

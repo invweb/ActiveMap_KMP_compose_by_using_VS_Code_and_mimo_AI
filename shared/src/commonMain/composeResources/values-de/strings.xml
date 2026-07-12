@@ -42,7 +42,7 @@
     <string name="route_end">Ende</string>
     <string name="route_line">Route</string>
     <string name="route_calculating">Route wird berechnet...</string>
-    <string name="route_info">Route: %1$.1f km, %2$s</string>
+    <string name="route_info">Route: %s km, %s</string>
     <string name="clear_route">Route löschen</string>
     <string name="select_route_points">Tippen Sie auf Punkte auf der Karte, um Route auszuwählen</string>
     <string name="select_point">Tippen Sie auf die Karte, um Punkt auszuwählen</string>

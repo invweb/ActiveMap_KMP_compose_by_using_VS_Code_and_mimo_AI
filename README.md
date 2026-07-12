@@ -2,6 +2,14 @@
 
 Kotlin Multiplatform + Compose Multiplatform application for tracking and cataloging locations. Supports Android, Desktop (JVM) and Web (Kotlin/JS).
 
+## Screenshots
+
+### Main map view
+![Map view](screenshots/map-main.png)
+
+### Route building
+![Route building](screenshots/map-route.png)
+
 ## Stack
 
 - **Kotlin 2.1.10** + **Compose Multiplatform 1.7.3**

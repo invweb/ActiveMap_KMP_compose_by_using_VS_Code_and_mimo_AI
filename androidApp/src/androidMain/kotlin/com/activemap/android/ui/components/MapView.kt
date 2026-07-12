@@ -64,13 +64,13 @@ fun MapView(
                     val mapEventsReceiver = object : MapEventsReceiver {
                         override fun singleTapConfirmedHelper(p: GeoPoint?): Boolean {
                             if (p == null) return false
-                            
+
                             val tappedLocation = currentLocations.find { loc ->
                                 val dx = p.latitude - loc.latitude
                                 val dy = p.longitude - loc.longitude
                                 dx * dx + dy * dy < 0.001
                             }
-                            
+
                             if (tappedLocation != null) {
                                 onLocationClick(tappedLocation)
                                 return true
@@ -117,6 +117,7 @@ fun MapView(
                             title = label
                             snippet = "%.6f, %.6f".format(waypoint.first, waypoint.second)
                             setInfoWindow(null)
+                            setOnMarkerClickListener(Marker.OnMarkerClickListener { _, _ -> true })
                         }
                         mapView.overlays.add(marker)
                     }
@@ -129,7 +130,7 @@ fun MapView(
                         setPoints(route.points.map { GeoPoint(it.latitude, it.longitude) })
                     }
                     mapView.overlays.add(polyline)
-                    
+
                     val boundingBox = BoundingBox.fromGeoPoints(
                         route.points.map { GeoPoint(it.latitude, it.longitude) }
                     )
@@ -137,21 +138,31 @@ fun MapView(
                 }
 
                 locations.forEach { location ->
-                    val isSelected = selectedRouteLocations.any { 
-                        it.first == location.latitude && it.second == location.longitude 
+                    val isSelected = selectedRouteLocations.any {
+                        it.first == location.latitude && it.second == location.longitude
                     }
                     val marker = Marker(mapView).apply {
                         position = GeoPoint(location.latitude, location.longitude)
                         setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
                         title = location.name
                         setInfoWindow(null)
-                        
+
+                        setOnMarkerClickListener(Marker.OnMarkerClickListener { clickedMarker, _ ->
+                            val loc = currentLocations.find {
+                                it.latitude == clickedMarker.position.latitude && it.longitude == clickedMarker.position.longitude
+                            }
+                            if (loc != null) {
+                                onLocationClick(loc)
+                            }
+                            true
+                        })
+
                         if (isRouteMode && isSelected) {
-                            val index = selectedRouteLocations.indexOfFirst { 
-                                it.first == location.latitude && it.second == location.longitude 
+                            val index = selectedRouteLocations.indexOfFirst {
+                                it.first == location.latitude && it.second == location.longitude
                             } + 1
                             snippet = "Маршрут: точка $index"
-                            
+
                             val size = 48
                             val bitmap = android.graphics.Bitmap.createBitmap(size, size, android.graphics.Bitmap.Config.ARGB_8888)
                             val canvas = android.graphics.Canvas(bitmap)
@@ -176,7 +187,7 @@ fun MapView(
                     }
                     mapView.overlays.add(marker)
                 }
-                
+
                 mapView.invalidate()
             },
             modifier = Modifier.fillMaxSize()

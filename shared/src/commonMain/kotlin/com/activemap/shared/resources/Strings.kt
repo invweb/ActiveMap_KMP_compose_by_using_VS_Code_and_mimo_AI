@@ -175,7 +175,8 @@ object Strings {
 
     @Composable
     fun routeInfo(distanceKm: Double, durationText: String): String {
-        return stringResource(Res.string.route_info, distanceKm, durationText)
+        val dist = "%.1f".format(distanceKm)
+        return stringResource(Res.string.route_info, dist, durationText)
     }
 
     @Composable

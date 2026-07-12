@@ -42,7 +42,7 @@
     <string name="route_end">End</string>
     <string name="route_line">Route</string>
     <string name="route_calculating">Calculating route...</string>
-    <string name="route_info">Route: %1$.1f km, %2$s</string>
+    <string name="route_info">Route: %s km, %s</string>
     <string name="clear_route">Clear Route</string>
     <string name="select_route_points">Tap points on map to select route</string>
     <string name="select_point">Tap on map to select point</string>
