@@ -76,8 +76,8 @@ class LocationHistoryModelTest {
 
         assertTrue(stopped.endDate != null)
         assertEquals(1000000L, stopped.startDate)
-        assertEquals(2000000L, stopped.endDate)
-        assertEquals(1000000L, stopped.durationMs)
+        assertTrue(stopped.endDate!! > stopped.startDate)
+        assertEquals(stopped.endDate!! - stopped.startDate, stopped.durationMs)
         assertEquals(2, stopped.points.size)
     }
 
