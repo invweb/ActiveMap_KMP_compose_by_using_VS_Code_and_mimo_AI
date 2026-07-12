@@ -14,6 +14,8 @@ import com.activemap.shared.viewmodel.LocationViewModel
 import com.activemap.desktop.ui.components.MapViewDesktop
 import com.activemap.shared.ui.Screen
 import com.activemap.shared.ui.SharedLocationList
+import com.activemap.shared.ui.SharedHistoryScreen
+import androidx.compose.material.icons.filled.DateRange
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -92,6 +94,12 @@ fun ActiveMapDesktopApp(viewModel: LocationViewModel) {
                                 modifier = Modifier.weight(1f)
                             )
                         }
+                        Screen.HISTORY -> {
+                            SharedHistoryScreen(
+                                viewModel = viewModel,
+                                onTrackClick = { track -> }
+                            )
+                        }
                     }
                     NavigationBar {
                         NavigationBarItem(
@@ -105,6 +113,12 @@ fun ActiveMapDesktopApp(viewModel: LocationViewModel) {
                             label = { Text("Список") },
                             selected = currentScreen == Screen.LIST,
                             onClick = { currentScreen = Screen.LIST }
+                        )
+                        NavigationBarItem(
+                            icon = { Icon(Icons.Default.DateRange, contentDescription = null) },
+                            label = { Text("История") },
+                            selected = currentScreen == Screen.HISTORY,
+                            onClick = { currentScreen = Screen.HISTORY }
                         )
                     }
                 }

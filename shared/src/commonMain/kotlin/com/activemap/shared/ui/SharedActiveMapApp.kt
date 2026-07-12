@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
@@ -189,7 +190,7 @@ fun SharedActiveMapApp(
                             }
                             IconButton(onClick = { currentScreen = Screen.HISTORY }) {
                                 Icon(
-                                    Icons.Default.History,
+                                    Icons.Default.DateRange,
                                     contentDescription = Strings.history()
                                 )
                             }
@@ -245,7 +246,7 @@ fun SharedActiveMapApp(
                             onClick = { currentScreen = Screen.LIST }
                         )
                         NavigationBarItem(
-                            icon = { Icon(Icons.Default.History, contentDescription = Strings.history()) },
+                            icon = { Icon(Icons.Default.DateRange, contentDescription = Strings.history()) },
                             label = { Text(Strings.history()) },
                             selected = currentScreen == Screen.HISTORY,
                             onClick = { currentScreen = Screen.HISTORY }

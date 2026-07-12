@@ -111,7 +111,7 @@ private fun CurrentTrackCard(viewModel: LocationViewModel) {
                         modifier = Modifier.padding(start = 8.dp)
                     ) {
                         Icon(
-                            imageVector = Icons.Default.Stop,
+                            imageVector = Icons.Default.Close,
                             contentDescription = "Остановить",
                             tint = MaterialTheme.colorScheme.onError
                         )
@@ -182,7 +182,7 @@ private fun TrackItem(track: LocationTrack, onClick: () -> Unit) {
                     )
                 } else {
                     Icon(
-                        imageVector = Icons.Default.Stop,
+                        imageVector = Icons.Default.Close,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.secondary
                     )
@@ -225,49 +225,28 @@ private fun TrackNameDialog(
 ) {
     var name by remember { mutableStateOf("Мой трек ${System.currentTimeMillis() / 1000}") }
     
-    Dialog(
-        onDismissRequest = onDismiss
-    ) {
-        Card(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Column(
-                modifier = Modifier.padding(24.dp)
-            ) {
-                Text(
-                    text = "Начать запись трека",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold
-                )
-                
-                Spacer(modifier = Modifier.height(16.dp))
-                
-                OutlinedTextField(
-                    value = name,
-                    onValueChange = { name = it },
-                    label = { Text("Название") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                
-                Spacer(modifier = Modifier.height(16.dp))
-                
-                Row(
-                    horizontalArrangement = Arrangement.End,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    TextButton(onClick = onDismiss) {
-                        Text("Отмена")
-                    }
-                    
-                    Spacer(modifier = Modifier.width(8.dp))
-                    
-                    TextButton(onClick = { onNameSelected(name) }) {
-                        Text("Старт")
-                    }
-                }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Начать запись трека", fontWeight = FontWeight.Bold) },
+        text = {
+            OutlinedTextField(
+                value = name,
+                onValueChange = { name = it },
+                label = { Text("Название") },
+                modifier = Modifier.fillMaxWidth()
+            )
+        },
+        confirmButton = {
+            TextButton(onClick = { onNameSelected(name) }) {
+                Text("Старт")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Отмена")
             }
         }
-    }
+    )
 }
 
 private fun formatDuration(start: Long, end: Long): String {
@@ -285,7 +264,9 @@ private fun formatDuration(start: Long, end: Long): String {
 
 private fun formatDistance(meters: Double): String {
     return if (meters >= 1000) {
-        "${meters / 1000:.1f} км"
+        val km = meters / 1000
+        val rounded = (km * 10).toLong() / 10.0
+        "$rounded км"
     } else {
         "${meters.toInt()} м"
     }
