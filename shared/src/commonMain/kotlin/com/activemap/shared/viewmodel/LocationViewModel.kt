@@ -10,12 +10,14 @@ import com.activemap.shared.service.OsrmService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.Job
 import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.combine
 
 class LocationViewModel(
     private val repository: LocationRepository,
@@ -76,6 +78,15 @@ class LocationViewModel(
     private val _isLocationLoading = MutableStateFlow(false)
     val isLocationLoading: StateFlow<Boolean> = _isLocationLoading.asStateFlow()
     
+    private val _currentTrack = MutableStateFlow<LocationTrack?>(null)
+    val currentTrack: StateFlow<LocationTrack?> = _currentTrack.asStateFlow()
+    
+    private val _allTracks = MutableStateFlow<List<LocationTrack>>(emptyList())
+    val allTracks: StateFlow<List<LocationTrack>> = _allTracks.asStateFlow()
+    
+    private val _isTracking = MutableStateFlow(false)
+    val isTracking: StateFlow<Boolean> = _isTracking.asStateFlow()
+    
     init {
         viewModelScope.launch {
             repository.getAllLocations()
@@ -85,6 +96,19 @@ class LocationViewModel(
                 .collect { locationList ->
                     _locations.value = locationList
                 }
+        }
+        
+        viewModelScope.launch {
+            combine(
+                repository.getAllTracks(),
+                repository.getCurrentTrack()
+            ) { allTracks, currentTrack ->
+                Pair(allTracks, currentTrack)
+            }.collect { (allTracks, currentTrack) ->
+                _allTracks.value = allTracks
+                _currentTrack.value = currentTrack
+                _isTracking.value = currentTrack != null
+            }
         }
     }
     
@@ -263,6 +287,76 @@ class LocationViewModel(
         }
     }
     
+    fun startTracking(name: String = "Мой трек") {
+        if (_isTracking.value) {
+            _error.value = "Трек уже активен"
+            return
+        }
+        
+        if (!locationService.hasPermission()) {
+            _error.value = "Требуется разрешение на геолокацию"
+            return
+        }
+        
+        viewModelScope.launch {
+            try {
+                repository.startNewTrack(name)
+                _operationSuccess.value = "Запись трека началась"
+                startLocationUpdates()
+            } catch (e: Exception) {
+                _error.value = "Ошибка запуска записи: ${e.message}"
+            }
+        }
+    }
+    
+    fun stopTracking() {
+        if (!_isTracking.value) {
+            _error.value = "Нет активного трека"
+            return
+        }
+        
+        viewModelScope.launch {
+            try {
+                repository.stopCurrentTrack()
+                stopLocationUpdates()
+                _operationSuccess.value = "Запись трека остановлена"
+            } catch (e: Exception) {
+                _error.value = "Ошибка остановки записи: ${e.message}"
+            }
+        }
+    }
+    
+    private var locationUpdateJob: kotlinx.coroutines.Job? = null
+    
+    private fun startLocationUpdates() {
+        stopLocationUpdates() // Stop any existing updates
+        
+        locationUpdateJob = viewModelScope.launch {
+            locationService.getLocationUpdates(5000L) // 5 seconds
+                .catch { e ->
+                    _error.value = "Ошибка получения локации: ${e.message}"
+                }
+                .collect { geoLocation ->
+                    _currentLocation.value = geoLocation
+                    
+                    _currentTrack.value?.id?.let { trackId ->
+                        viewModelScope.launch {
+                            try {
+                                repository.saveLocationPoint(trackId, geoLocation)
+                            } catch (e: Exception) {
+                                // Silent fail for individual points
+                            }
+                        }
+                    }
+                }
+        }
+    }
+    
+    private fun stopLocationUpdates() {
+        locationUpdateJob?.cancel()
+        locationUpdateJob = null
+    }
+    
     private fun calculateRoute() {
         val waypoints = _routeWaypoints.value
         if (waypoints.size < 2) return
@@ -288,6 +382,7 @@ class LocationViewModel(
     }
     
     fun close() {
+        stopLocationUpdates()
         supervisorJob.cancel()
         osrmService.close()
     }

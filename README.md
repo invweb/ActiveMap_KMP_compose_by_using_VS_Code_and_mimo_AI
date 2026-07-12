@@ -10,6 +10,9 @@ Kotlin Multiplatform + Compose Multiplatform application for tracking and catalo
 ### Route building
 ![Route building](screenshots/map-route.png)
 
+### Location history
+![Location history](screenshots/history.png)
+
 ## Stack
 
 - **Kotlin 2.1.10** + **Compose Multiplatform 1.7.3**
@@ -24,14 +27,14 @@ Kotlin Multiplatform + Compose Multiplatform application for tracking and catalo
 ActiveMap/
 ├── shared/             # Common module: models, ViewModel, Repository, shared UI, services
 │   └── commonMain/
-│       ├── model/      # Location, Route, enums
-│       ├── repository/ # LocationRepository interface, InMemoryLocationRepository
+│       ├── model/      # Location, Route, LocationTrack, LocationPoint, enums
+│       ├── repository/ # LocationRepository interface, InMemoryLocationRepository, RoomLocationRepository
 │       ├── viewmodel/  # LocationViewModel (DI-ready)
 │       ├── service/    # OsrmService, OfflineRouteService, LocationService, DataExporter
-│       ├── ui/         # Shared Compose UI (SharedActiveMapApp, forms, lists)
+│       ├── ui/         # Shared Compose UI (SharedActiveMapApp, history screen, forms, lists)
 │       ├── di/         # Koin app module
 │       └── resources/  # Localization (RU/EN/DE/UK)
-├── androidApp/         # Android: Room, OsmDroid, Koin Android module
+├── androidApp/         # Android: Room, OsmDroid, Koin Android module, LocationHistory repository
 ├── desktopApp/         # Desktop: JSON file storage, Canvas map, Koin Desktop module
 ├── webApp/             # Web: localStorage, Leaflet.js, Koin Web module
 ├── .github/workflows/  # CI/CD (GitHub Actions)
@@ -63,6 +66,7 @@ ActiveMap/
 - **Map** with location markers (colors by activity type), long press to select a point
 - **Geolocation** — center map on current position (Android with permission request, Web via browser API)
 - **Routing** — build routes between two points via OSRM API (with offline straight-line fallback)
+- **Location history** — track and save movement paths with automatic GPS sampling
 - **List of locations** with filtering by type/status and search by name
 - **Adding a location** with full form and validation (name, coordinates, rating required)
 - **Detailed card** with viewing and editing
@@ -71,11 +75,49 @@ ActiveMap/
 - **Localization** — Russian, English, German, Ukrainian
 - **Error handling** — validation errors, operation feedback via Snackbar
 
+## Features
+
+### Location History Tracking
+
+- **Automatic GPS sampling** — records location points every 5 seconds
+- **Distance calculation** — computes total distance using Haversine formula
+- **Track management** — start/stop tracking, view history
+- **Persistent storage** — Room database (Android), in-memory + file serialization (Desktop/Web)
+- **Track statistics** — duration, distance, number of points
+
+### Technical Implementation
+
+| Component | Description |
+|-----------|-------------|
+| `LocationPoint` | GPS coordinate with timestamp and accuracy |
+| `LocationTrack` | Sequence of points with computed distance/duration |
+| `RoomLocationRepository` | Android Room DAOs for tracks and points |
+| `InMemoryLocationRepository` | Cross-platform in-memory with persistence |
+| `LocationViewModel` | State management for tracking (start/stop, updates) |
+| `SharedHistoryScreen` | Compose UI for history list and current track |
+
+### Data Model (Tracks)
+
+| Field | Type | Description |
+|-------|------|-------------|
+| id | String | Unique track identifier |
+| name | String | User-assigned name |
+| startDate | Long | Track start timestamp |
+| endDate | Long? | Track end timestamp (null if active) |
+| points | List<LocationPoint> | GPS coordinates |
+| distanceMeters | Double | Total distance (computed) |
+| durationMs | Long? | Total duration (computed) |
+
+### Tests
+
+- `LocationHistoryModelTest.kt` — 14 tests for models, serialization, distance calculation
+- `LocationHistoryRepositoryTest.kt` — 14 tests for repository operations, track lifecycle
+
 ## Architecture
 
-- **shared** — common module with `@Serializable` models, `LocationViewModel` with DI, `LocationRepository` interface, shared Compose UI (`SharedActiveMapApp`, forms, lists), services (`OsrmService`, `OfflineRouteService`, `LocationService`, `DataExporter`). Platform-specific implementations in `androidMain`, `desktopMain`, `jsMain`.
+- **shared** — common module with `@Serializable` models, `LocationViewModel` with DI, `LocationRepository` interface, shared Compose UI (`SharedActiveMapApp`, history screen, forms, lists), services (`OsrmService`, `OfflineRouteService`, `LocationService`, `DataExporter`). Platform-specific implementations in `androidMain`, `desktopMain`, `jsMain`.
 - **DI** — Koin with platform-specific modules providing `LocationRepository` and `LocationService`
-- **AndroidApp** — Room database, OsmDroid maps, location permissions, Koin Android module
+- **AndroidApp** — Room database with TrackDao/TrackPointDao, OsmDroid maps, location permissions, Koin Android module
 - **DesktopApp** — JSON file storage, Canvas-based map, Koin Desktop module
 - **WebApp** — localStorage, Leaflet.js maps, Koin Web module
 - **CI/CD** — GitHub Actions: build Android + Desktop, run all tests (JVM, Android, JS Node)
@@ -98,6 +140,16 @@ ActiveMap/
 | Photos | list of links |
 | Created/Updated | timestamps |
 
+## Location History Model
+
+| Field | Type |
+|-------|------|
+| latitude | Double |
+| longitude | Double |
+| timestamp | Long |
+| accuracy | Float? |
+| speed | Float? |
+
 ## Requirements
 
 - JDK 17+
@@ -107,13 +159,13 @@ ActiveMap/
 
 ## About
 
-This project was built in **3 days** (July 9–12, 2026) using **MiMo Code** — an AI-powered coding assistant by Xiaomi. The entire codebase, including architecture, UI, routing logic, persistence, CI/CD, and tests, was generated through natural language conversation with the AI agent.
+This project was built using **GigaCode** — an AI-powered coding assistant. The location history tracking feature was added on July 12, 2026.
 
 ### Technologies used during development
 
 | Category | Tool |
 |----------|------|
-| AI assistant | MiMo Code (Xiaomi, model: mimo-auto) |
+| AI assistant | GigaCode (Sber) |
 | Language | Kotlin 2.1.10 |
 | UI framework | Compose Multiplatform 1.7.3 |
 | Build system | Gradle 9.6.1 + AGP 8.8.2 |
@@ -135,6 +187,7 @@ This project was built in **3 days** (July 9–12, 2026) using **MiMo Code** —
 | Jul 10 | Route building (OSRM), localization system (RU/EN/DE/UK) |
 | Jul 11 | Major refactoring — DI, shared UI, persistence, error handling, geolocation, export/import, tests, CI/CD, Leaflet.js maps, desktop zoom |
 | Jul 12 | Bug fixes — Koin crash, marker tap in route mode, route info formatting |
+| Jul 12 | Location history tracking — models, repository, Room, UI, tests (28 tests added) |
 
 ## License
 

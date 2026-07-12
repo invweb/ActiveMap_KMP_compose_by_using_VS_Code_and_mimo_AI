@@ -6,10 +6,12 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
-@Database(entities = [LocationEntity::class], version = 1, exportSchema = false)
+@Database(entities = [LocationEntity::class, TrackEntity::class, TrackPointEntity::class], version = 2, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class LocationDatabase : RoomDatabase() {
     abstract fun locationDao(): LocationDao
+    abstract fun trackDao(): TrackDao
+    abstract fun trackPointDao(): TrackPointDao
     
     companion object {
         @Volatile
@@ -21,7 +23,9 @@ abstract class LocationDatabase : RoomDatabase() {
                     context.applicationContext,
                     LocationDatabase::class.java,
                     "activemap_database"
-                ).build()
+                )
+                .fallbackToDestructiveMigration() // For simplicity during development
+                .build()
                 INSTANCE = instance
                 instance
             }

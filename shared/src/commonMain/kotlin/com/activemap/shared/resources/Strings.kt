@@ -239,4 +239,37 @@ object Strings {
 
     @Composable
     fun selectAtLeast2(): String = stringResource(Res.string.select_at_least_2)
+
+    @Composable
+    fun history(): String = stringResource(Res.string.history)
+
+    @Composable
+    fun startTrack(): String = stringResource(Res.string.start_track)
+
+    @Composable
+    fun trackName(): String = stringResource(Res.string.track_name)
+
+    @Composable
+    fun duration(): String = stringResource(Res.string.duration)
+
+    @Composable
+    fun distance(): String = stringResource(Res.string.distance)
+
+    @Composable
+    fun activeTrack(): String = stringResource(Res.string.active_track)
+
+    @Composable
+    fun noTracks(): String = stringResource(Res.string.no_tracks)
+
+    @Composable
+    fun trackStarted(): String = stringResource(Res.string.track_started)
+
+    @Composable
+    fun trackStopped(): String = stringResource(Res.string.track_stopped)
+
+    @Composable
+    fun trackAlreadyActive(): String = stringResource(Res.string.track_already_active)
+
+    @Composable
+    fun noActiveTrack(): String = stringResource(Res.string.no_active_track)
 }

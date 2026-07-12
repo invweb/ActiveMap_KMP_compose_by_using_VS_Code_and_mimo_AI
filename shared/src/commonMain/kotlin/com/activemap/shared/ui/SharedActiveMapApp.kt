@@ -19,6 +19,7 @@ import com.activemap.shared.resources.Strings
 import com.activemap.shared.resources.LocaleManager
 import com.activemap.shared.resources.AppLanguage
 import kotlinx.coroutines.launch
+import com.activemap.shared.ui.SharedHistoryScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -186,6 +187,12 @@ fun SharedActiveMapApp(
                                     contentDescription = Strings.language()
                                 )
                             }
+                            IconButton(onClick = { currentScreen = Screen.HISTORY }) {
+                                Icon(
+                                    Icons.Default.History,
+                                    contentDescription = Strings.history()
+                                )
+                            }
                         }
                     )
                 },
@@ -236,6 +243,12 @@ fun SharedActiveMapApp(
                             label = { Text(Strings.list()) },
                             selected = currentScreen == Screen.LIST,
                             onClick = { currentScreen = Screen.LIST }
+                        )
+                        NavigationBarItem(
+                            icon = { Icon(Icons.Default.History, contentDescription = Strings.history()) },
+                            label = { Text(Strings.history()) },
+                            selected = currentScreen == Screen.HISTORY,
+                            onClick = { currentScreen = Screen.HISTORY }
                         )
                     }
                 }
@@ -346,6 +359,14 @@ fun SharedActiveMapApp(
                             onFilterChange = { viewModel.updateFilter(it) },
                             onLocationClick = { viewModel.selectLocation(it) },
                             modifier = Modifier.padding(paddingValues)
+                        )
+                    }
+                    Screen.HISTORY -> {
+                        SharedHistoryScreen(
+                            viewModel = viewModel,
+                            onTrackClick = { track ->
+                                // TODO: Show track details
+                            }
                         )
                     }
                 }
