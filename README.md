@@ -105,6 +105,37 @@ ActiveMap/
 - Gradle 9.6.1 (wrapper in the project)
 - Node.js (for JS tests)
 
+## About
+
+This project was built in **3 days** (July 9–12, 2026) using **MiMo Code** — an AI-powered coding assistant by Xiaomi. The entire codebase, including architecture, UI, routing logic, persistence, CI/CD, and tests, was generated through natural language conversation with the AI agent.
+
+### Technologies used during development
+
+| Category | Tool |
+|----------|------|
+| AI assistant | MiMo Code (Xiaomi, model: mimo-auto) |
+| Language | Kotlin 2.1.10 |
+| UI framework | Compose Multiplatform 1.7.3 |
+| Build system | Gradle 9.6.1 + AGP 8.8.2 |
+| IDE | VS Code + MiMo Code extension |
+| Maps (Android) | OsmDroid 6.1.18 |
+| Maps (Desktop) | Canvas (OSM tiles) |
+| Maps (Web) | Leaflet.js |
+| DI | Koin |
+| Networking | Ktor (OSRM API) |
+| Serialization | kotlinx.serialization |
+| Storage | Room (Android), JSON (Desktop), localStorage (Web) |
+| CI/CD | GitHub Actions |
+
+### Development timeline
+
+| Date | Milestone |
+|------|-----------|
+| Jul 9 | Initial commit — project scaffold, shared module, Android/Desktop/Web apps |
+| Jul 10 | Route building (OSRM), localization system (RU/EN/DE/UK) |
+| Jul 11 | Major refactoring — DI, shared UI, persistence, error handling, geolocation, export/import, tests, CI/CD, Leaflet.js maps, desktop zoom |
+| Jul 12 | Bug fixes — Koin crash, marker tap in route mode, route info formatting |
+
 ## License
 
 MIT
