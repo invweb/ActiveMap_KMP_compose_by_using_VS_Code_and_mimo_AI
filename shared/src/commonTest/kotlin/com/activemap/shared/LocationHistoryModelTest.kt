@@ -5,6 +5,7 @@ import com.activemap.shared.model.LocationTrack
 import kotlinx.serialization.json.Json
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class LocationHistoryModelTest {
