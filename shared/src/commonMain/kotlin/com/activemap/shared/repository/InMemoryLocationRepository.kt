@@ -116,10 +116,10 @@ class InMemoryLocationRepository : LocationRepository {
     
     private fun haversineDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
         val R = 6371000.0
-        val dLat = kotlin.math.toRadians(lat2 - lat1)
-        val dLon = kotlin.math.toRadians(lon2 - lon1)
+        val dLat = (lat2 - lat1) * kotlin.math.PI / 180.0
+        val dLon = (lon2 - lon1) * kotlin.math.PI / 180.0
         val a = kotlin.math.sin(dLat / 2) * kotlin.math.sin(dLat / 2) +
-                kotlin.math.cos(kotlin.math.toRadians(lat1)) * kotlin.math.cos(kotlin.math.toRadians(lat2)) *
+                kotlin.math.cos(lat1 * kotlin.math.PI / 180.0) * kotlin.math.cos(lat2 * kotlin.math.PI / 180.0) *
                 kotlin.math.sin(dLon / 2) * kotlin.math.sin(dLon / 2)
         val c = 2 * kotlin.math.atan2(kotlin.math.sqrt(a), kotlin.math.sqrt(1 - a))
         return R * c

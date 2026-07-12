@@ -3,6 +3,7 @@ package com.activemap.shared.model
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
+import kotlin.math.PI
 
 @Serializable
 data class LocationPoint(
@@ -79,11 +80,11 @@ data class LocationTrack(
     private fun haversineDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
         val R = 6371000.0 // Earth radius in meters
         
-        val dLat = kotlin.math.toRadians(lat2 - lat1)
-        val dLon = kotlin.math.toRadians(lon2 - lon1)
+        val dLat = (lat2 - lat1) * PI / 180.0
+        val dLon = (lon2 - lon1) * PI / 180.0
         
         val a = sin(dLat / 2) * sin(dLat / 2) +
-                cos(kotlin.math.toRadians(lat1)) * cos(kotlin.math.toRadians(lat2)) *
+                cos(lat1 * PI / 180.0) * cos(lat2 * PI / 180.0) *
                 sin(dLon / 2) * sin(dLon / 2)
         
         val c = 2 * atan2(sqrt(a), sqrt(1 - a))
