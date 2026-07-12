@@ -15,6 +15,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.activemap.shared.model.LocationTrack
 import com.activemap.shared.viewmodel.LocationViewModel
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -122,7 +126,7 @@ private fun CurrentTrackCard(viewModel: LocationViewModel) {
                 
                 currentTrack?.let { track ->
                     TrackInfoRow("Название", track.name)
-                    TrackInfoRow("Длительность", formatDuration(track.startDate, track.endDate ?: System.currentTimeMillis()))
+                    TrackInfoRow("Длительность", formatDuration(track.startDate, track.endDate ?: Clock.System.now().toEpochMilliseconds()))
                     TrackInfoRow("Расстояние", formatDistance(track.distanceMeters))
                 }
             }
@@ -192,7 +196,7 @@ private fun TrackItem(track: LocationTrack, onClick: () -> Unit) {
             Spacer(modifier = Modifier.height(4.dp))
             
             TrackInfoRow("Дата", formatDateString(track.startDate))
-            TrackInfoRow("Длительность", formatDuration(track.startDate, track.endDate ?: System.currentTimeMillis()))
+            TrackInfoRow("Длительность", formatDuration(track.startDate, track.endDate ?: Clock.System.now().toEpochMilliseconds()))
             TrackInfoRow("Расстояние", formatDistance(track.distanceMeters))
         }
     }
@@ -223,7 +227,7 @@ private fun TrackNameDialog(
     onNameSelected: (String) -> Unit,
     onDismiss: () -> Unit
 ) {
-    var name by remember { mutableStateOf("Мой трек ${System.currentTimeMillis() / 1000}") }
+    var name by remember { mutableStateOf("Мой трек ${Clock.System.now().toEpochMilliseconds() / 1000}") }
     
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -273,7 +277,7 @@ private fun formatDistance(meters: Double): String {
 }
 
 private fun formatDateString(timestamp: Long): String {
-    val date = java.util.Date(timestamp)
-    val sdf = java.text.SimpleDateFormat("dd.MM.yyyy HH:mm", java.util.Locale.getDefault())
-    return sdf.format(date)
+    val instant = Instant.fromEpochMilliseconds(timestamp)
+    val localDateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
+    return "${localDateTime.dayOfMonth.toString().padStart(2, '0')}.${localDateTime.monthNumber.toString().padStart(2, '0')}.${localDateTime.year} ${localDateTime.hour.toString().padStart(2, '0')}:${localDateTime.minute.toString().padStart(2, '0')}"
 }
