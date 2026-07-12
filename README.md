@@ -46,7 +46,7 @@ ActiveMap/
 ## Launch
 
 ```bash
-# Requires JDK 17+ (brew install openjdk@17)
+# Requires JDK 17+ (brew install openjdk)
 
 # Android (emulator or device)
 ./gradlew :androidApp:installDebug
@@ -70,7 +70,7 @@ ActiveMap/
 - **List of locations** with filtering by type/status and search by name
 - **Adding a location** with full form and validation (name, coordinates, rating required)
 - **Detailed card** with viewing and editing
-- **Data persistence** — Room (Android), JSON file `~/.activemap/locations.json` (Desktop), localStorage (Web)
+- **Data persistence** — Room (Android), JSON files `~/.activemap/locations.json` + `tracks.json` (Desktop), localStorage (Web)
 - **Export/Import** — JSON export and import of all locations
 - **Localization** — Russian, English, German, Ukrainian
 - **Error handling** — validation errors, operation feedback via Snackbar
@@ -82,7 +82,7 @@ ActiveMap/
 - **Automatic GPS sampling** — records location points every 5 seconds
 - **Distance calculation** — computes total distance using Haversine formula
 - **Track management** — start/stop tracking, view history
-- **Persistent storage** — Room database (Android), in-memory + file serialization (Desktop/Web)
+- **Persistent storage** — Room database (Android), JSON files `~/.activemap/locations.json` + `tracks.json` (Desktop), in-memory with file serialization (Web)
 - **Track statistics** — duration, distance, number of points
 
 ### Technical Implementation
@@ -93,6 +93,7 @@ ActiveMap/
 | `LocationTrack` | Sequence of points with computed distance/duration |
 | `RoomLocationRepository` | Android Room DAOs for tracks and points |
 | `InMemoryLocationRepository` | Cross-platform in-memory with persistence |
+| `JsonFileLocationRepository` | Desktop JSON file persistence for locations and tracks |
 | `LocationViewModel` | State management for tracking (start/stop, updates) |
 | `SharedHistoryScreen` | Compose UI for history list and current track |
 
@@ -118,7 +119,7 @@ ActiveMap/
 - **shared** — common module with `@Serializable` models, `LocationViewModel` with DI, `LocationRepository` interface, shared Compose UI (`SharedActiveMapApp`, history screen, forms, lists), services (`OsrmService`, `OfflineRouteService`, `LocationService`, `DataExporter`). Platform-specific implementations in `androidMain`, `desktopMain`, `jsMain`.
 - **DI** — Koin with platform-specific modules providing `LocationRepository` and `LocationService`
 - **AndroidApp** — Room database with TrackDao/TrackPointDao, OsmDroid maps, location permissions, Koin Android module
-- **DesktopApp** — JSON file storage, Canvas-based map, Koin Desktop module
+- **DesktopApp** — JSON file storage for locations and tracks (`JsonFileLocationRepository`), Canvas-based map, Koin Desktop module
 - **WebApp** — localStorage, Leaflet.js maps, Koin Web module
 - **CI/CD** — GitHub Actions: build Android + Desktop, run all tests (JVM, Android, JS Node)
 
@@ -157,15 +158,22 @@ ActiveMap/
 - Gradle 9.6.1 (wrapper in the project)
 - Node.js (for JS tests)
 
+## Build Status
+
+The project builds successfully for all targets:
+- `:desktopApp:build` — ✅ BUILD SUCCESSFUL
+- `:webApp:build` — ✅ BUILD SUCCESSFUL
+- `:shared:allTests` — ✅ All tests pass
+
 ## About
 
-This project was built using **GigaCode** — an AI-powered coding assistant. The location history tracking feature was added on July 12, 2026.
+This project was built using **MiMo Code** — an AI-powered coding assistant by Xiaomi. The location history tracking feature was added on July 12, 2026.
 
 ### Technologies used during development
 
 | Category | Tool |
 |----------|------|
-| AI assistant | GigaCode (Sber) |
+| AI assistant | MiMo Code (Xiaomi) |
 | Language | Kotlin 2.1.10 |
 | UI framework | Compose Multiplatform 1.7.3 |
 | Build system | Gradle 9.6.1 + AGP 8.8.2 |
@@ -188,6 +196,7 @@ This project was built using **GigaCode** — an AI-powered coding assistant. Th
 | Jul 11 | Major refactoring — DI, shared UI, persistence, error handling, geolocation, export/import, tests, CI/CD, Leaflet.js maps, desktop zoom |
 | Jul 12 | Bug fixes — Koin crash, marker tap in route mode, route info formatting |
 | Jul 12 | Location history tracking — models, repository, Room, UI, tests (28 tests added) |
+| Jul 12 | Build fixes — resolved compilation errors in shared/desktop modules, desktop history tracking now fully functional |
 
 ## License
 
