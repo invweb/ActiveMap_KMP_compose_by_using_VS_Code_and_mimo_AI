@@ -6,6 +6,7 @@ import com.activemap.shared.model.LocationPoint
 import com.activemap.shared.model.LocationTrack
 import com.activemap.shared.repository.LocationRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 class RoomLocationRepository(
@@ -55,7 +56,7 @@ class RoomLocationRepository(
     
     override fun getCurrentTrack(): Flow<LocationTrack?> {
         return trackDao.getAllTracks().map { entities ->
-            entities.find { it.endDate == null }
+            entities.find { it.endDate == null }?.toLocationTrack()
         }
     }
     
@@ -65,7 +66,8 @@ class RoomLocationRepository(
     }
     
     override suspend fun stopCurrentTrack() {
-        val currentTrack = trackDao.getAllTracks().firstOrNull { it.endDate == null }
+        val tracks = trackDao.getAllTracks().first()
+        val currentTrack = tracks.firstOrNull { it.endDate == null }
         currentTrack?.let { existing ->
             val stopped = existing.toLocationTrack().stop()
             trackDao.updateTrack(TrackEntity.fromLocationTrack(stopped))
